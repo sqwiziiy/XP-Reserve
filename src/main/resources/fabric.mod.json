@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "xp-reserve",
+  "version": "${version}",
+  "name": "Mentalitys | XP Reserve",
+  "description": "A survival-focused Fabric mod for safely storing and recovering experience through reusable XP flasks.",
+  "authors": [
+    "Mentality"
+  ],
+  "license": "All-Rights-Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.mentality.xpreserve.XpReserveMod"
+    ],
+    "client": [
+      "com.mentality.xpreserve.client.XpReserveClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "1.21.11",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

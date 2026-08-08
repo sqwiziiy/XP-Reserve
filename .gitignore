@@ -1,0 +1,14 @@
+# Gradle and build output
+/.gradle/
+/build/
+/run/
+/out/
+
+# Private local planning documentation
+/docs/
+
+# IDE and operating-system files
+/.idea/
+*.iml
+/logs/
+.DS_Store
