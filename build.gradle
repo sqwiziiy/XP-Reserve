@@ -22,6 +22,24 @@ loom {
     }
 }
 
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = 'xp-reserve-gametest'
+        enableGameTests = true
+        enableClientGameTests = false
+        eula = true
+    }
+}
+
+loom {
+    runs {
+        gameTest {
+            vmArg "-Dfabric-api.gametest.report-file=${layout.buildDirectory.file('reports/gametest/junit.xml').get().asFile}"
+        }
+    }
+}
+
 repositories {
     mavenCentral()
 }

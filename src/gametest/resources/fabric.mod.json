@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "xp-reserve-gametest",
+  "version": "1.0.0",
+  "name": "XP Reserve GameTests",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "com.mentality.xpreserve.gametest.FlaskRuntimeGameTests"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "fabric-api": "*",
+    "minecraft": "1.21.11",
+    "java": ">=21"
+  }
+}
