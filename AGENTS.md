@@ -46,3 +46,46 @@ At minimum before completing any later implementation phase:
 ```
 
 For gameplay changes, add focused automated tests where practical and document any manual in-game acceptance steps.
+
+## Mandatory phase reports
+
+All future coding agents must create or update a private phase report after every implementation phase or meaningful sub-phase, **before declaring the task complete**. Store reports under:
+
+```text
+docs/reports/PHASE_<NN>_<SHORT_NAME>.md
+```
+
+Examples:
+
+```text
+docs/reports/PHASE_00_FOUNDATION.md
+docs/reports/PHASE_01_XP_CORE.md
+docs/reports/PHASE_02_FLASK_I.md
+docs/reports/PHASE_03_TIER_SYSTEM.md
+docs/reports/PHASE_02_1_FIX_WITHDRAWAL.md
+```
+
+Reports are local/private development artifacts and remain ignored by Git through `/docs/`. They must document work actually completed, never planned work presented as complete. Failed or partial work must be reported honestly, with commands and validation results recorded; do not claim `PASS` without evidence.
+
+Every report must use this minimum structure:
+
+```markdown
+# Phase XX — <Name>
+
+## Status
+PASS / PARTIAL / BLOCKED
+
+## Scope
+## Implemented
+## Files changed
+## Technical decisions
+## Validation
+## Test results
+## Artifacts
+## Known issues
+## Deviations
+## Git
+## Next phase
+```
+
+State `NOT RUN` for every test that was not run. Record relevant failures even if they were later fixed, without dumping huge logs. Document toolchain changes, gameplay behavior changes, compatibility or save-format changes, dependencies, and any XP duplication/data-loss risk. Phases involving XP math or item persistence must explicitly record the invariants checked.
