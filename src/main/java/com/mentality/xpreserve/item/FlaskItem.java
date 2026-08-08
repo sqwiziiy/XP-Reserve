@@ -4,9 +4,11 @@ import com.mentality.xpreserve.XpReserveMod;
 import com.mentality.xpreserve.xp.PlayerXp;
 import com.mentality.xpreserve.xp.XpTransaction;
 import com.mentality.xpreserve.xp.XpTransfer;
+import com.mentality.xpreserve.xp.MendingAwareXpRelease;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -79,10 +81,16 @@ public final class FlaskItem extends Item {
             return InteractionResult.FAIL;
         }
 
+        if (!player.isShiftKeyDown()) {
+            if (storedXp == 0 || !(player instanceof ServerPlayer serverPlayer)) return InteractionResult.SUCCESS_SERVER;
+            MendingAwareXpRelease.Result release = MendingAwareXpRelease.release(serverPlayer, storedXp);
+            if (release == null) return InteractionResult.FAIL;
+            FlaskStoredXp.set(stack, 0);
+            return InteractionResult.SUCCESS_SERVER;
+        }
+
         long playerXp = PlayerXp.currentRawXp(player);
-        XpTransaction transaction = player.isShiftKeyDown()
-                ? XpTransfer.deposit(playerXp, storedXp, capacity())
-                : XpTransfer.withdraw(playerXp, storedXp, capacity());
+        XpTransaction transaction = XpTransfer.deposit(playerXp, storedXp, capacity());
 
         if (!transaction.changed()) {
             return InteractionResult.SUCCESS_SERVER;

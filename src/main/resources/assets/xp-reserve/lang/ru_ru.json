@@ -11,6 +11,6 @@
   "tooltip.xp-reserve.flask.high": "Высокое заполнение",
   "tooltip.xp-reserve.flask.full": "Заполнено",
   "tooltip.xp-reserve.flask.store": "Shift + ПКМ: сохранить опыт",
-  "tooltip.xp-reserve.flask.withdraw": "ПКМ: забрать опыт",
+  "tooltip.xp-reserve.flask.withdraw": "ПКМ: высвободить опыт",
   "tooltip.xp-reserve.flask.invalid": "Некорректное состояние фляги"
 }
