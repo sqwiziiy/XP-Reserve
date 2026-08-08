@@ -1,7 +1,7 @@
 package com.mentality.xpreserve.component;
 
 import com.mentality.xpreserve.XpReserveMod;
-import com.mentality.xpreserve.item.FlaskItem;
+import com.mentality.xpreserve.item.FlaskTier;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,7 +15,7 @@ public final class ModDataComponents {
             BuiltInRegistries.DATA_COMPONENT_TYPE,
             Identifier.fromNamespaceAndPath(XpReserveMod.MOD_ID, "stored_xp"),
             DataComponentType.<Long>builder()
-                    .persistent(ExtraCodecs.longRange(0, Math.toIntExact(FlaskItem.CAPACITY)))
+                    .persistent(ExtraCodecs.longRange(0, Math.toIntExact(FlaskTier.III.capacity())))
                     .networkSynchronized(ByteBufCodecs.VAR_LONG)
                     .build()
     );

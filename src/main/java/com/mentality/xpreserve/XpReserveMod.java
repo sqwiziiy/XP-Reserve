@@ -2,6 +2,7 @@ package com.mentality.xpreserve;
 
 import com.mentality.xpreserve.component.ModDataComponents;
 import com.mentality.xpreserve.registry.ModItems;
+import com.mentality.xpreserve.recipe.ModRecipeSerializers;
 import net.fabricmc.api.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ public final class XpReserveMod implements ModInitializer {
     public void onInitialize() {
         ModDataComponents.initialize();
         ModItems.initialize();
+        ModRecipeSerializers.initialize();
         LOGGER.info("Mentalitys | XP Reserve initialized!");
     }
 }
