@@ -1,5 +1,16 @@
 {
   "item.xp-reserve.flask_i": "Experience Flask I",
   "item.xp-reserve.flask_ii": "Experience Flask II",
-  "item.xp-reserve.flask_iii": "Experience Flask III"
+  "item.xp-reserve.flask_iii": "Experience Flask III",
+  "tooltip.xp-reserve.flask.stored": "Stored: %s / %s XP",
+  "tooltip.xp-reserve.flask.capacity": "Capacity: Level %s",
+  "tooltip.xp-reserve.flask.percent": "%s%% full",
+  "tooltip.xp-reserve.flask.empty": "Empty",
+  "tooltip.xp-reserve.flask.low": "Low",
+  "tooltip.xp-reserve.flask.medium": "Medium",
+  "tooltip.xp-reserve.flask.high": "High",
+  "tooltip.xp-reserve.flask.full": "Full",
+  "tooltip.xp-reserve.flask.store": "Sneak + Right Click: Store XP",
+  "tooltip.xp-reserve.flask.withdraw": "Right Click: Withdraw XP",
+  "tooltip.xp-reserve.flask.invalid": "Invalid flask state"
 }

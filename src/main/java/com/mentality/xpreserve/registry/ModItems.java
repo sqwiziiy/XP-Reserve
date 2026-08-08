@@ -10,6 +10,9 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomModelData;
+import java.util.List;
 
 /** Registers XP Reserve items. */
 public final class ModItems {
@@ -23,7 +26,8 @@ public final class ModItems {
             new FlaskItem(FlaskTier.I, new Item.Properties()
                     .setId(ResourceKey.create(Registries.ITEM, FLASK_I_ID))
                     .stacksTo(1)
-                    .component(ModDataComponents.STORED_XP, 0L))
+                    .component(ModDataComponents.STORED_XP, 0L)
+                    .component(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(0.0F), List.of(), List.of(), List.of())))
     );
 
     public static final Item FLASK_II = registerFlask(FLASK_II_ID, FlaskTier.II);
@@ -36,7 +40,8 @@ public final class ModItems {
                 new FlaskItem(tier, new Item.Properties()
                         .setId(ResourceKey.create(Registries.ITEM, id))
                         .stacksTo(1)
-                        .component(ModDataComponents.STORED_XP, 0L))
+                        .component(ModDataComponents.STORED_XP, 0L)
+                        .component(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(List.of(0.0F), List.of(), List.of(), List.of())))
         );
     }
 

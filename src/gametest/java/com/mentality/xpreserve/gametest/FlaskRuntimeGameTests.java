@@ -3,6 +3,8 @@ package com.mentality.xpreserve.gametest;
 import com.mentality.xpreserve.item.FlaskItem;
 import com.mentality.xpreserve.item.FlaskStoredXp;
 import com.mentality.xpreserve.item.FlaskTier;
+import com.mentality.xpreserve.item.FlaskFillState;
+import com.mentality.xpreserve.item.FlaskVisuals;
 import com.mentality.xpreserve.registry.ModItems;
 import com.mentality.xpreserve.xp.PlayerXp;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
@@ -99,6 +101,23 @@ public final class FlaskRuntimeGameTests {
         helper.succeed();
     }
 
+    @GameTest
+    public void fullOnlyGlintAndVisualMirrorsAreDerivedFromStoredXp(GameTestHelper helper) {
+        for (net.minecraft.world.item.Item item : java.util.List.of(ModItems.FLASK_I, ModItems.FLASK_II, ModItems.FLASK_III)) {
+            FlaskItem flaskItem = (FlaskItem) item;
+            ItemStack stack = new ItemStack(item);
+            helper.assertTrue(!flaskItem.isFoil(stack), "Empty flask must not glint");
+            helper.assertValueEqual(FlaskFillState.EMPTY, FlaskVisuals.fillState(stack), "Empty flask must be visually empty");
+            FlaskStoredXp.set(stack, 1);
+            helper.assertTrue(!flaskItem.isFoil(stack), "Partial flask must not glint");
+            helper.assertValueEqual(FlaskFillState.LOW, FlaskVisuals.fillState(stack), "One XP must be low fill");
+            FlaskStoredXp.set(stack, flaskItem.capacity());
+            helper.assertTrue(flaskItem.isFoil(stack), "Full flask must glint");
+            helper.assertValueEqual(FlaskFillState.FULL, FlaskVisuals.fillState(stack), "Full flask must be visually full");
+        }
+        helper.succeed();
+    }
+
     private static void assertUpgrade(GameTestHelper helper, String recipeId, net.minecraft.world.item.Item sourceItem,
             net.minecraft.world.item.Item material, net.minecraft.world.item.Item targetItem, long storedXp) {
         CraftingRecipe recipe = loadedCraftingRecipe(helper, recipeId);
@@ -109,6 +128,11 @@ public final class FlaskRuntimeGameTests {
         ItemStack result = recipe.assemble(input, helper.getLevel().registryAccess());
         helper.assertTrue(result.is(targetItem), recipeId + " must produce its target flask tier");
         helper.assertValueEqual(storedXp, FlaskStoredXp.get(result), recipeId + " must preserve stored XP exactly");
+        FlaskItem target = (FlaskItem) targetItem;
+        helper.assertValueEqual(FlaskFillState.from(storedXp, target.capacity()), FlaskVisuals.fillState(result),
+                recipeId + " must derive visuals for the target tier capacity");
+        helper.assertTrue(target.isFoil(result) == (storedXp == target.capacity()),
+                recipeId + " glint must be based on target tier fullness");
     }
 
     private static CraftingRecipe loadedCraftingRecipe(GameTestHelper helper, String path) {

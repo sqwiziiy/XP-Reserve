@@ -1,5 +1,16 @@
 {
   "item.xp-reserve.flask_i": "Фляга опыта I",
   "item.xp-reserve.flask_ii": "Фляга опыта II",
-  "item.xp-reserve.flask_iii": "Фляга опыта III"
+  "item.xp-reserve.flask_iii": "Фляга опыта III",
+  "tooltip.xp-reserve.flask.stored": "Сохранено: %s / %s XP",
+  "tooltip.xp-reserve.flask.capacity": "Вместимость: уровень %s",
+  "tooltip.xp-reserve.flask.percent": "%s%% заполнено",
+  "tooltip.xp-reserve.flask.empty": "Пусто",
+  "tooltip.xp-reserve.flask.low": "Низкое заполнение",
+  "tooltip.xp-reserve.flask.medium": "Среднее заполнение",
+  "tooltip.xp-reserve.flask.high": "Высокое заполнение",
+  "tooltip.xp-reserve.flask.full": "Заполнено",
+  "tooltip.xp-reserve.flask.store": "Shift + ПКМ: сохранить опыт",
+  "tooltip.xp-reserve.flask.withdraw": "ПКМ: забрать опыт",
+  "tooltip.xp-reserve.flask.invalid": "Некорректное состояние фляги"
 }

@@ -9,6 +9,11 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 import net.minecraft.world.level.Level;
 
 /** Reusable, server-authoritative experience flask. */
@@ -26,6 +31,37 @@ public final class FlaskItem extends Item {
 
     public long capacity() {
         return tier.capacity();
+    }
+
+    @Override
+    public boolean isFoil(ItemStack stack) {
+        try {
+            return FlaskStoredXp.get(stack) == capacity();
+        } catch (IllegalStateException ignored) {
+            return false;
+        }
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display,
+            Consumer<Component> tooltip, TooltipFlag flag) {
+        final long storedXp;
+        try {
+            storedXp = FlaskStoredXp.get(stack);
+        } catch (IllegalStateException ignored) {
+            tooltip.accept(Component.translatable("tooltip.xp-reserve.flask.invalid").withStyle(ChatFormatting.RED));
+            return;
+        }
+        FlaskFillState fill = FlaskFillState.from(storedXp, capacity());
+        tooltip.accept(Component.translatable("tooltip.xp-reserve.flask.stored", storedXp, capacity()).withStyle(ChatFormatting.GREEN));
+        tooltip.accept(Component.translatable("tooltip.xp-reserve.flask.capacity", tier.equivalentLevel()).withStyle(ChatFormatting.GRAY));
+        tooltip.accept(Component.translatable("tooltip.xp-reserve.flask." + fill.name().toLowerCase()).withStyle(ChatFormatting.DARK_GRAY));
+        if (fill != FlaskFillState.EMPTY && fill != FlaskFillState.FULL) {
+            tooltip.accept(Component.translatable("tooltip.xp-reserve.flask.percent", FlaskFillState.percentage(storedXp, capacity()))
+                    .withStyle(ChatFormatting.DARK_GRAY));
+        }
+        tooltip.accept(Component.translatable("tooltip.xp-reserve.flask.store").withStyle(ChatFormatting.DARK_GRAY));
+        tooltip.accept(Component.translatable("tooltip.xp-reserve.flask.withdraw").withStyle(ChatFormatting.DARK_GRAY));
     }
 
     @Override

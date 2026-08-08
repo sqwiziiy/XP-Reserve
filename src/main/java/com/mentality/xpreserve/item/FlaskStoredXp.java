@@ -19,6 +19,7 @@ public final class FlaskStoredXp {
     public static void set(ItemStack stack, long storedXp) {
         validate(stack, storedXp);
         stack.set(ModDataComponents.STORED_XP, storedXp);
+        FlaskVisuals.refresh(stack);
     }
 
     private static void validate(ItemStack stack, long storedXp) {

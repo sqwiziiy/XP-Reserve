@@ -1,6 +1,7 @@
 package com.mentality.xpreserve.recipe;
 
 import com.mentality.xpreserve.item.FlaskStoredXp;
+import com.mentality.xpreserve.item.FlaskVisuals;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -56,6 +57,7 @@ public final class FlaskUpgradeRecipe implements CraftingRecipe {
                     FlaskStoredXp.get(stack);
                     ItemStack result = stack.transmuteCopy(target, 1);
                     FlaskStoredXp.get(result);
+                    FlaskVisuals.refresh(result);
                     return result;
                 } catch (IllegalStateException ignored) {
                     return ItemStack.EMPTY;
