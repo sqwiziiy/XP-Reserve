@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 class FlaskFillStateTest {
     @Test
@@ -49,5 +51,26 @@ class FlaskFillStateTest {
                 org.junit.jupiter.api.Assertions.assertTrue(text.contains("tooltip.xp-reserve.flask." + key));
             }
         }
+    }
+
+    @Test
+    void fillTexturesKeepTheirTierShellAnchorsFixed() throws IOException {
+        for (String tier : new String[] {"i", "ii", "iii"}) {
+            BufferedImage empty = texture(tier, "empty");
+            for (String state : new String[] {"low", "medium", "high", "full"}) {
+                BufferedImage image = texture(tier, state);
+                assertEquals(16, image.getWidth());
+                assertEquals(16, image.getHeight());
+                for (int[] anchor : new int[][] {{7, 1}, {5, 3}, {3, 10}, {7, 14}, {11, 10}}) {
+                    assertEquals(empty.getRGB(anchor[0], anchor[1]), image.getRGB(anchor[0], anchor[1]),
+                            tier + " " + state + " shifted a fixed flask-shell anchor");
+                }
+            }
+        }
+    }
+
+    private BufferedImage texture(String tier, String state) throws IOException {
+        return ImageIO.read(getClass().getClassLoader().getResourceAsStream(
+                "assets/xp-reserve/textures/item/flask_" + tier + "_" + state + ".png"));
     }
 }
