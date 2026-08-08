@@ -17,6 +17,7 @@
       "com.mentality.xpreserve.client.XpReserveClient"
     ]
   },
+  "mixins": ["xp-reserve.mixins.json"],
   "depends": {
     "fabricloader": ">=0.19.3",
     "minecraft": "1.21.11",

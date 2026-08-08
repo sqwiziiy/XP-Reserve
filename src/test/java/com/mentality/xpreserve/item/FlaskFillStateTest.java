@@ -55,22 +55,22 @@ class FlaskFillStateTest {
 
     @Test
     void fillTexturesKeepTheirTierShellAnchorsFixed() throws IOException {
-        for (String tier : new String[] {"i", "ii", "iii"}) {
-            BufferedImage empty = texture(tier, "empty");
+        for (String family : new String[] {"flask_i", "flask_ii", "flask_iii", "soul_flask"}) {
+            BufferedImage empty = texture(family, "empty");
             for (String state : new String[] {"low", "medium", "high", "full"}) {
-                BufferedImage image = texture(tier, state);
+                BufferedImage image = texture(family, state);
                 assertEquals(16, image.getWidth());
                 assertEquals(16, image.getHeight());
                 for (int[] anchor : new int[][] {{7, 1}, {5, 3}, {3, 10}, {7, 14}, {11, 10}}) {
                     assertEquals(empty.getRGB(anchor[0], anchor[1]), image.getRGB(anchor[0], anchor[1]),
-                            tier + " " + state + " shifted a fixed flask-shell anchor");
+                            family + " " + state + " shifted a fixed flask-shell anchor");
                 }
             }
         }
     }
 
-    private BufferedImage texture(String tier, String state) throws IOException {
+    private BufferedImage texture(String family, String state) throws IOException {
         return ImageIO.read(getClass().getClassLoader().getResourceAsStream(
-                "assets/xp-reserve/textures/item/flask_" + tier + "_" + state + ".png"));
+                "assets/xp-reserve/textures/item/" + family + "_" + state + ".png"));
     }
 }

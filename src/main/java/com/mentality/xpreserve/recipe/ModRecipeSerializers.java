@@ -17,6 +17,8 @@ public final class ModRecipeSerializers {
             "flask_i_upgrade", ModItems.FLASK_I, Items.DIAMOND_BLOCK, ModItems.FLASK_II);
     public static final RecipeSerializer<FlaskUpgradeRecipe> FLASK_II_UPGRADE = register(
             "flask_ii_upgrade", ModItems.FLASK_II, Items.RECOVERY_COMPASS, ModItems.FLASK_III);
+    public static final RecipeSerializer<FlaskUpgradeRecipe> SOUL_FLASK_UPGRADE = register(
+            "soul_flask_upgrade", ModItems.FLASK_III, Items.TOTEM_OF_UNDYING, ModItems.SOUL_FLASK);
 
     private ModRecipeSerializers() { }
 
@@ -35,6 +37,7 @@ public final class ModRecipeSerializers {
     static RecipeSerializer<FlaskUpgradeRecipe> forSource(net.minecraft.world.item.Item source) {
         if (source == ModItems.FLASK_I) return FLASK_I_UPGRADE;
         if (source == ModItems.FLASK_II) return FLASK_II_UPGRADE;
+        if (source == ModItems.FLASK_III) return SOUL_FLASK_UPGRADE;
         throw new IllegalArgumentException("Unknown Flask upgrade source item");
     }
 

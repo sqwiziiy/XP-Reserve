@@ -15,13 +15,18 @@ import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.level.gamerules.GameRules;
 
 /** Runtime acceptance tests for the production Flask I registration and interaction path. */
 public final class FlaskRuntimeGameTests {
@@ -103,7 +108,7 @@ public final class FlaskRuntimeGameTests {
 
     @GameTest
     public void fullOnlyGlintAndVisualMirrorsAreDerivedFromStoredXp(GameTestHelper helper) {
-        for (net.minecraft.world.item.Item item : java.util.List.of(ModItems.FLASK_I, ModItems.FLASK_II, ModItems.FLASK_III)) {
+        for (net.minecraft.world.item.Item item : java.util.List.of(ModItems.FLASK_I, ModItems.FLASK_II, ModItems.FLASK_III, ModItems.SOUL_FLASK)) {
             FlaskItem flaskItem = (FlaskItem) item;
             ItemStack stack = new ItemStack(item);
             helper.assertTrue(!flaskItem.isFoil(stack), "Empty flask must not glint");
@@ -115,6 +120,152 @@ public final class FlaskRuntimeGameTests {
             helper.assertTrue(flaskItem.isFoil(stack), "Full flask must glint");
             helper.assertValueEqual(FlaskFillState.FULL, FlaskVisuals.fillState(stack), "Full flask must be visually full");
         }
+        helper.succeed();
+    }
+
+    @GameTest
+    public void soulFlaskRecipeAndSerializationPreserveStoredXp(GameTestHelper helper) {
+        for (long storedXp : new long[] {0, 1, 12_345, FlaskTier.III.capacity()}) {
+            assertUpgrade(helper, "soul_flask_upgrade", ModItems.FLASK_III, Items.TOTEM_OF_UNDYING, ModItems.SOUL_FLASK, storedXp);
+            assertSerialized(helper, ModItems.SOUL_FLASK, storedXp);
+        }
+        helper.succeed();
+    }
+
+    @GameTest
+    public void soulFlaskCapturesOnRealDeathAndDropsConvertedItem(GameTestHelper helper) {
+        setKeepInventory(helper, false);
+        ServerPlayer player = playerWithFlask(helper, ModItems.SOUL_FLASK, 1_000, 0);
+        helper.assertFalse(player.getAbilities().instabuild, "Death test player must not have creative inventory protection");
+        player.die(helper.getLevel().damageSources().genericKill());
+        ItemStack dropped = onlyDropped(helper, ModItems.FLASK_III);
+        helper.assertValueEqual(1_000L, FlaskStoredXp.get(dropped), "Real death must drop one Flask III with captured XP");
+        helper.assertValueEqual(0L, helper.getEntities(EntityType.ITEM).stream().filter(item -> item.getItem().is(ModItems.SOUL_FLASK)).count(),
+                "Real death must not leave the armed Soul Flask in drops");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void soulFlaskCapacityLimitLeavesVanillaDeathXpBasis(GameTestHelper helper) {
+        setKeepInventory(helper, false);
+        ServerPlayer player = playerWithFlask(helper, ModItems.SOUL_FLASK, 5_000, 30_000);
+        player.die(helper.getLevel().damageSources().genericKill());
+        ItemStack dropped = onlyDropped(helper, ModItems.FLASK_III);
+        helper.assertValueEqual(30_970L, FlaskStoredXp.get(dropped), "Capacity-limited death capture must fill only free capacity");
+        helper.assertValueEqual(4_030L, PlayerXp.currentRawXp(player), "Vanilla death must receive the post-capture 4030 XP basis");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void soulFlaskPartialPrefillAndZeroXpFollowExactDeathContract(GameTestHelper helper) {
+        setKeepInventory(helper, false);
+        ServerPlayer partial = playerWithFlask(helper, ModItems.SOUL_FLASK, 5_000, 10_000);
+        partial.die(helper.getLevel().damageSources().genericKill());
+        helper.assertValueEqual(15_000L, FlaskStoredXp.get(onlyDropped(helper, ModItems.FLASK_III)),
+                "Partial Soul Flask prefill must retain old XP and capture all 5000 player XP");
+
+        ServerPlayer zero = playerWithFlask(helper, ModItems.SOUL_FLASK, 0, 0);
+        zero.die(helper.getLevel().damageSources().genericKill());
+        java.util.List<ItemEntity> souls = helper.getEntities(EntityType.ITEM).stream()
+                .filter(entity -> entity.getItem().is(ModItems.SOUL_FLASK)).toList();
+        helper.assertValueEqual(1, souls.size(), "Zero XP death must leave Soul Flask armed");
+        helper.assertValueEqual(0L, FlaskStoredXp.get(souls.getFirst().getItem()), "Zero XP death must not change stored XP");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void soulFlaskDeathLeavesOtherFlaskTiersUntouched(GameTestHelper helper) {
+        setKeepInventory(helper, false);
+        ServerPlayer player = playerWithFlask(helper, ModItems.SOUL_FLASK, 4_000, 0);
+        player.getInventory().setItem(1, flask(ModItems.FLASK_I, 1_000));
+        player.getInventory().setItem(2, flask(ModItems.FLASK_II, 2_000));
+        player.getInventory().setItem(3, flask(ModItems.FLASK_III, 3_000));
+        player.die(helper.getLevel().damageSources().genericKill());
+        long capturedFlaskIii = helper.getEntities(EntityType.ITEM).stream().filter(entity -> entity.getItem().is(ModItems.FLASK_III))
+                .mapToLong(entity -> FlaskStoredXp.get(entity.getItem())).filter(value -> value == 4_000L).count();
+        helper.assertValueEqual(1L, capturedFlaskIii, "Only player XP must be captured");
+        helper.assertValueEqual(1_000L, FlaskStoredXp.get(onlyDropped(helper, ModItems.FLASK_I)), "Flask I must be unchanged");
+        helper.assertValueEqual(2_000L, FlaskStoredXp.get(onlyDropped(helper, ModItems.FLASK_II)), "Flask II must be unchanged");
+        long untouchedFlaskIii = helper.getEntities(EntityType.ITEM).stream().filter(entity -> entity.getItem().is(ModItems.FLASK_III))
+                .mapToLong(entity -> FlaskStoredXp.get(entity.getItem())).filter(value -> value == 3_000L).count();
+        helper.assertValueEqual(1L, untouchedFlaskIii, "Existing Flask III must be unchanged");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void soulFlaskHighXpDeathMatchesVanillaPostCaptureOrbOutput(GameTestHelper helper) {
+        setKeepInventory(helper, false);
+        ServerPlayer insured = playerWithFlask(helper, ModItems.SOUL_FLASK, 40_000, 0);
+        insured.die(helper.getLevel().damageSources().genericKill());
+        long insuredOrbs = experienceOrbValue(helper);
+        helper.assertValueEqual(100L, insuredOrbs, "Vanilla 9030-XP post-capture death must emit its capped 100-XP reward");
+        helper.assertValueEqual(30_970L, FlaskStoredXp.get(onlyDropped(helper, ModItems.FLASK_III)), "High-XP death must capture only Flask III capacity");
+
+        helper.killAllEntitiesOfClass(ExperienceOrb.class);
+        ServerPlayer baseline = helper.makeMockServerPlayerInLevel();
+        positionInTest(helper, baseline);
+        baseline.getAbilities().instabuild = false;
+        baseline.getAbilities().invulnerable = false;
+        baseline.giveExperiencePoints(9_030);
+        baseline.die(helper.getLevel().damageSources().genericKill());
+        helper.assertValueEqual(insuredOrbs, experienceOrbValue(helper), "Death XP orbs must match vanilla's 9030-XP post-capture baseline");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void soulFlaskTotemAndPriorityRespectRealDeathLifecycle(GameTestHelper helper) {
+        ServerPlayer totemPlayer = playerWithFlask(helper, ModItems.SOUL_FLASK, 10_000, 0);
+        totemPlayer.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.TOTEM_OF_UNDYING));
+        totemPlayer.hurtServer(helper.getLevel(), helper.getLevel().damageSources().generic(), Float.MAX_VALUE);
+        helper.assertTrue(totemPlayer.isAlive(), "Real lethal damage with a Totem must keep the player alive");
+        helper.assertTrue(totemPlayer.getMainHandItem().is(ModItems.SOUL_FLASK), "Totem prevention must not consume Soul Flask insurance");
+        helper.assertValueEqual(0L, FlaskStoredXp.get(totemPlayer.getMainHandItem()), "Totem prevention must not capture XP");
+
+        setKeepInventory(helper, false);
+        ServerPlayer priorityPlayer = playerWithFlask(helper, ModItems.SOUL_FLASK, 1_000, FlaskTier.III.capacity());
+        ItemStack offhand = soul(0);
+        ItemStack hotbar = soul(0);
+        priorityPlayer.setItemInHand(InteractionHand.OFF_HAND, offhand);
+        priorityPlayer.getInventory().setItem(1, hotbar);
+        priorityPlayer.die(helper.getLevel().damageSources().genericKill());
+        helper.assertValueEqual(1_000L, FlaskStoredXp.get(onlyDropped(helper, ModItems.FLASK_III)), "Full main hand must be skipped and offhand must win before hotbar");
+        java.util.List<ItemEntity> untouchedSoulDrops = helper.getEntities(EntityType.ITEM).stream()
+                .filter(entity -> entity.getItem().is(ModItems.SOUL_FLASK)).toList();
+        helper.assertValueEqual(2, untouchedSoulDrops.size(), "Full main-hand and lower-priority hotbar Soul Flasks must remain armed in death drops");
+        helper.assertValueEqual(1L, untouchedSoulDrops.stream().filter(drop -> FlaskStoredXp.get(drop.getItem()) == 0).count(),
+                "Lower-priority Soul Flask must retain its stored XP");
+        helper.assertValueEqual(1L, untouchedSoulDrops.stream().filter(drop -> FlaskStoredXp.get(drop.getItem()) == FlaskTier.III.capacity()).count(),
+                "Full higher-priority Soul Flask must be skipped rather than consumed");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void soulFlaskDoesNotTriggerWhenKeepInventoryPreservesXp(GameTestHelper helper) {
+        helper.runAfterDelay(2, () -> {
+            setKeepInventory(helper, true);
+            ServerPlayer player = playerWithFlask(helper, ModItems.SOUL_FLASK, 1_000, 0);
+            player.die(helper.getLevel().damageSources().genericKill());
+            helper.assertTrue(player.getMainHandItem().is(ModItems.SOUL_FLASK), "keepInventory must preserve armed Soul Flask identity");
+            helper.assertValueEqual(0L, FlaskStoredXp.get(player.getMainHandItem()), "keepInventory must not capture XP");
+            helper.assertValueEqual(1_000L, PlayerXp.currentRawXp(player), "keepInventory must preserve player XP");
+            setKeepInventory(helper, false);
+            helper.succeed();
+        });
+    }
+
+    @GameTest
+    public void soulFlaskManualReleaseRepairsMendingGearWithoutDisarming(GameTestHelper helper) {
+        ServerPlayer player = playerWithFlask(helper, ModItems.SOUL_FLASK, 0, 500);
+        ItemStack mendingTool = new ItemStack(Items.IRON_PICKAXE);
+        mendingTool.setDamageValue(100);
+        mendingTool.enchant(helper.getLevel().registryAccess().lookupOrThrow(Registries.ENCHANTMENT)
+                .getOrThrow(Enchantments.MENDING), 1);
+        player.setItemInHand(InteractionHand.OFF_HAND, mendingTool);
+
+        ((FlaskItem) ModItems.SOUL_FLASK).use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+        helper.assertTrue(player.getMainHandItem().is(ModItems.SOUL_FLASK), "Manual release must leave Soul Flask armed");
+        helper.assertValueEqual(0L, FlaskStoredXp.get(player.getMainHandItem()), "Manual release must empty Soul Flask normally");
+        helper.assertTrue(mendingTool.getDamageValue() < 100, "Vanilla Mending must repair the damaged eligible item");
         helper.succeed();
     }
 
@@ -201,14 +352,49 @@ public final class FlaskRuntimeGameTests {
         helper.assertValueEqual(storedXp, FlaskStoredXp.get(decoded), "Serialized tier stack must retain stored XP");
     }
 
+    private static ItemStack soul(long storedXp) {
+        ItemStack stack = new ItemStack(ModItems.SOUL_FLASK);
+        FlaskStoredXp.set(stack, storedXp);
+        return stack;
+    }
+
+    private static ItemStack flask(net.minecraft.world.item.Item item, long storedXp) {
+        ItemStack stack = new ItemStack(item);
+        FlaskStoredXp.set(stack, storedXp);
+        return stack;
+    }
+
+    private static ItemStack onlyDropped(GameTestHelper helper, net.minecraft.world.item.Item item) {
+        java.util.List<ItemEntity> drops = helper.getEntities(EntityType.ITEM).stream().filter(entity -> entity.getItem().is(item)).toList();
+        helper.assertValueEqual(1, drops.size(), "Expected exactly one dropped " + item);
+        return drops.getFirst().getItem();
+    }
+
+    private static long experienceOrbValue(GameTestHelper helper) {
+        return helper.getEntities(EntityType.EXPERIENCE_ORB).stream().mapToLong(ExperienceOrb::getValue).sum();
+    }
+
     private static ServerPlayer playerWithFlask(GameTestHelper helper, net.minecraft.world.item.Item item, long playerXp, long storedXp) {
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        positionInTest(helper, player);
+        player.getAbilities().instabuild = false;
+        player.getAbilities().invulnerable = false;
         player.giveExperiencePoints(Math.toIntExact(playerXp));
         ItemStack flask = new ItemStack(item);
         FlaskStoredXp.set(flask, storedXp);
         player.setItemInHand(InteractionHand.MAIN_HAND, flask);
         helper.assertValueEqual(playerXp, PlayerXp.currentRawXp(player), "Player XP setup must be exact");
         return player;
+    }
+
+    private static void positionInTest(GameTestHelper helper, ServerPlayer player) {
+        net.minecraft.core.BlockPos position = helper.absolutePos(new net.minecraft.core.BlockPos(1, 2, 1));
+        player.teleportTo(position.getX() + 0.5, position.getY(), position.getZ() + 0.5);
+    }
+
+    private static void setKeepInventory(GameTestHelper helper, boolean value) {
+        helper.getLevel().getGameRules().set(GameRules.KEEP_INVENTORY, value, helper.getLevel().getServer());
+        helper.assertValueEqual(value, helper.getLevel().getGameRules().get(GameRules.KEEP_INVENTORY), "keepInventory setup must apply");
     }
 
     private static void assertState(

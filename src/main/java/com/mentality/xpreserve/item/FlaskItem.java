@@ -1,6 +1,7 @@
 package com.mentality.xpreserve.item;
 
 import com.mentality.xpreserve.XpReserveMod;
+import com.mentality.xpreserve.registry.ModItems;
 import com.mentality.xpreserve.xp.PlayerXp;
 import com.mentality.xpreserve.xp.XpTransaction;
 import com.mentality.xpreserve.xp.XpTransfer;
@@ -64,6 +65,10 @@ public final class FlaskItem extends Item {
         }
         tooltip.accept(Component.translatable("tooltip.xp-reserve.flask.store").withStyle(ChatFormatting.DARK_GRAY));
         tooltip.accept(Component.translatable("tooltip.xp-reserve.flask.withdraw").withStyle(ChatFormatting.DARK_GRAY));
+        if (stack.is(ModItems.SOUL_FLASK)) {
+            tooltip.accept(Component.translatable("tooltip.xp-reserve.soul.ready").withStyle(ChatFormatting.GOLD));
+            tooltip.accept(Component.translatable("tooltip.xp-reserve.soul.death").withStyle(ChatFormatting.DARK_GRAY));
+        }
     }
 
     @Override

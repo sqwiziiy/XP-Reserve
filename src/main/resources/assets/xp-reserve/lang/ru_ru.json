@@ -2,6 +2,7 @@
   "item.xp-reserve.flask_i": "Фляга опыта I",
   "item.xp-reserve.flask_ii": "Фляга опыта II",
   "item.xp-reserve.flask_iii": "Фляга опыта III",
+  "item.xp-reserve.soul_flask": "Фляга души",
   "tooltip.xp-reserve.flask.stored": "Сохранено: %s / %s XP",
   "tooltip.xp-reserve.flask.capacity": "Вместимость: уровень %s",
   "tooltip.xp-reserve.flask.percent": "%s%% заполнено",
@@ -12,5 +13,7 @@
   "tooltip.xp-reserve.flask.full": "Заполнено",
   "tooltip.xp-reserve.flask.store": "Shift + ПКМ: сохранить опыт",
   "tooltip.xp-reserve.flask.withdraw": "ПКМ: высвободить опыт",
-  "tooltip.xp-reserve.flask.invalid": "Некорректное состояние фляги"
+  "tooltip.xp-reserve.flask.invalid": "Некорректное состояние фляги",
+  "tooltip.xp-reserve.soul.ready": "Страховка от смерти: готова",
+  "tooltip.xp-reserve.soul.death": "При смерти сохраняет опыт и становится Флягой опыта III"
 }

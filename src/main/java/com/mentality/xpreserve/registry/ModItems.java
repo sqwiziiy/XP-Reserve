@@ -19,6 +19,7 @@ public final class ModItems {
     private static final Identifier FLASK_I_ID = Identifier.fromNamespaceAndPath(XpReserveMod.MOD_ID, "flask_i");
     private static final Identifier FLASK_II_ID = Identifier.fromNamespaceAndPath(XpReserveMod.MOD_ID, "flask_ii");
     private static final Identifier FLASK_III_ID = Identifier.fromNamespaceAndPath(XpReserveMod.MOD_ID, "flask_iii");
+    private static final Identifier SOUL_FLASK_ID = Identifier.fromNamespaceAndPath(XpReserveMod.MOD_ID, "soul_flask");
 
     public static final Item FLASK_I = Registry.register(
             BuiltInRegistries.ITEM,
@@ -32,6 +33,7 @@ public final class ModItems {
 
     public static final Item FLASK_II = registerFlask(FLASK_II_ID, FlaskTier.II);
     public static final Item FLASK_III = registerFlask(FLASK_III_ID, FlaskTier.III);
+    public static final Item SOUL_FLASK = registerFlask(SOUL_FLASK_ID, FlaskTier.III);
 
     private static Item registerFlask(Identifier id, FlaskTier tier) {
         return Registry.register(
