@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Mentalitys | XP Reserve documentation for Fabric Minecraft 1.21.11.">
+  <title>Mentalitys | XP Reserve — Wiki</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="skip-link" href="#overview" data-en>Skip to content</a><a class="skip-link" href="#overview" data-ru hidden>К содержанию</a>
+  <header class="hero">
+    <div class="hero-top container">
+      <a class="brand" href="#overview" aria-label="XP Reserve home"><span class="brand-orb">✦</span><span>Mentalitys | XP Reserve</span></a>
+      <div class="header-actions">
+        <a class="button button-github" href="https://github.com/sqwiziiy/XP-Reserve" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a>
+        <span class="button button-disabled" aria-disabled="true" title="Modrinth project not published yet">Modrinth — soon</span>
+        <div class="language-switch" role="group" aria-label="Language / Язык">
+          <button type="button" data-language="en" aria-label="Switch to English">EN</button>
+          <button type="button" data-language="ru" aria-label="Переключить на русский">RU</button>
+        </div>
+      </div>
+    </div>
+    <div class="container hero-copy">
+      <p class="eyebrow">Fabric · Minecraft 1.21.11 · v0.1.0</p>
+      <h1 data-en>Experience, safely in reserve.</h1><h1 data-ru hidden>Опыт — надёжно в запасе.</h1>
+      <p class="lead" data-en>Reusable XP flasks for survival progression, vanilla Mending, and a second chance after death.</p>
+      <p class="lead" data-ru hidden>Многоразовые фляги опыта для выживания, ванильной Починки и второго шанса после смерти.</p>
+      <div class="badges" aria-label="Compatibility">
+        <span>Minecraft 1.21.11</span><span>Fabric</span><span>Fabric API</span><span>Java 21</span><span>v0.1.0</span><span>EN / RU</span>
+      </div>
+    </div>
+  </header>
+
+  <nav class="pill-nav" aria-label="Documentation navigation">
+    <a href="#overview" data-en>Overview</a><a href="#overview" data-ru hidden>Обзор</a>
+    <a href="#flasks" data-en>Flasks</a><a href="#flasks" data-ru hidden>Фляги</a>
+    <a href="#recipes" data-en>Recipes</a><a href="#recipes" data-ru hidden>Рецепты</a>
+    <a href="#soul" data-en>Soul Flask</a><a href="#soul" data-ru hidden>Фляга души</a>
+    <a href="#mending" data-en>Mending</a><a href="#mending" data-ru hidden>Починка</a>
+    <a href="#progression" data-en>Progression</a><a href="#progression" data-ru hidden>Прогресс</a>
+    <a href="#faq">FAQ</a><a href="#changelog" data-en>Changelog</a><a href="#changelog" data-ru hidden>Журнал изменений</a>
+  </nav>
+
+  <main class="container">
+    <section id="overview" class="section overview-grid">
+      <div>
+        <p class="section-kicker" data-en>Overview</p><p class="section-kicker" data-ru hidden>Обзор</p>
+        <h2 data-en>A portable reserve for real XP.</h2><h2 data-ru hidden>Переносной запас настоящего XP.</h2>
+        <p data-en>XP Reserve stores exact XP points rather than subtracting and restoring abstract levels. Fill a flask when you have more experience than you want to risk, then release it later when Mending or your XP bar needs it.</p>
+        <p data-ru hidden>XP Reserve хранит точные очки XP, а не вычитает и возвращает абстрактные уровни. Наполните флягу, когда не хотите рисковать опытом, и высвободите его позже — для Починки или шкалы опыта.</p>
+      </div>
+      <aside class="callout">
+        <span class="callout-icon">✦</span>
+        <p data-en><strong>Raw XP, always.</strong> Capacity levels are familiar milestones; the stored value itself is exact XP.</p>
+        <p data-ru hidden><strong>Всегда точный XP.</strong> Уровни вместимости — понятные ориентиры; внутри хранится точное количество XP.</p>
+      </aside>
+    </section>
+
+    <section id="flasks" class="section">
+      <p class="section-kicker" data-en>Flasks</p><p class="section-kicker" data-ru hidden>Фляги</p>
+      <h2 data-en>One system, four survival tools.</h2><h2 data-ru hidden>Одна система, четыре инструмента выживания.</h2>
+      <div class="flask-grid">
+        <article class="flask-card tier-one"><img src="assets/flask_i_empty.png" alt="Experience Flask I"><h3 data-en>Experience Flask I</h3><h3 data-ru hidden>Фляга опыта I</h3><strong>1,395 XP</strong><span data-en>Level 30 from zero</span><span data-ru hidden>30 уровней с нуля</span><p data-en>First reusable reserve.</p><p data-ru hidden>Первый многоразовый запас.</p></article>
+        <article class="flask-card tier-two"><img src="assets/flask_ii_empty.png" alt="Experience Flask II"><h3 data-en>Experience Flask II</h3><h3 data-ru hidden>Фляга опыта II</h3><strong>5,345 XP</strong><span data-en>Level 50 from zero</span><span data-ru hidden>50 уровней с нуля</span><p data-en>Diamond-block upgrade.</p><p data-ru hidden>Улучшение алмазным блоком.</p></article>
+        <article class="flask-card tier-three"><img src="assets/flask_iii_empty.png" alt="Experience Flask III"><h3 data-en>Experience Flask III</h3><h3 data-ru hidden>Фляга опыта III</h3><strong>30,970 XP</strong><span data-en>Level 100 from zero</span><span data-ru hidden>100 уровней с нуля</span><p data-en>Recovery Compass upgrade.</p><p data-ru hidden>Улучшение компасом восстановления.</p></article>
+        <article class="flask-card soul-card"><img src="assets/soul_flask_empty.png" alt="Soul Flask"><h3 data-en>Soul Flask</h3><h3 data-ru hidden>Фляга души</h3><strong>30,970 XP</strong><span data-en>Death insurance</span><span data-ru hidden>Страховка от смерти</span><p data-en>Totem upgrade; becomes Flask III after a capture.</p><p data-ru hidden>Улучшение тотемом; после сохранения становится Флягой опыта III.</p></article>
+      </div>
+      <div class="fill-strip" aria-label="Flask fill states">
+        <div><img src="assets/flask_iii_empty.png" alt=""><span data-en>Empty</span><span data-ru hidden>Пусто</span></div>
+        <div><img src="assets/flask_iii_low.png" alt=""><span data-en>Low</span><span data-ru hidden>Низко</span></div>
+        <div><img src="assets/flask_iii_medium.png" alt=""><span data-en>Medium</span><span data-ru hidden>Средне</span></div>
+        <div><img src="assets/flask_iii_high.png" alt=""><span data-en>High</span><span data-ru hidden>Высоко</span></div>
+        <div><img src="assets/flask_iii_full.png" alt=""><span data-en>Full</span><span data-ru hidden>Полно</span></div>
+      </div>
+      <p class="caption" data-en>Fill states are a clear visual guide. A flask glints only when it is exactly full.</p><p class="caption" data-ru hidden>Состояния заполнения — наглядный ориентир. Фляга блестит только при точном полном заполнении.</p>
+    </section>
+
+    <section id="recipes" class="section">
+      <p class="section-kicker" data-en>Recipes</p><p class="section-kicker" data-ru hidden>Рецепты</p>
+      <h2 data-en>Start small, upgrade when ready.</h2><h2 data-ru hidden>Начните с малого, улучшайте по мере готовности.</h2>
+      <div class="recipe-layout">
+        <article class="recipe-card"><h3 data-en>Experience Flask I</h3><h3 data-ru hidden>Фляга опыта I</h3><div class="craft-grid" aria-label="Flask I crafting layout"><b>A</b><b>L</b><b>A</b><b>L</b><b>B</b><b>L</b><b>A</b><b>L</b><b>A</b></div><p data-en><code>A</code> Amethyst Shard · <code>L</code> Lapis Lazuli · <code>B</code> Glass Bottle</p><p data-ru hidden><code>A</code> Осколок аметиста · <code>L</code> Лазурит · <code>B</code> Стеклянная бутылочка</p></article>
+        <article class="recipe-card upgrades"><h3 data-en>Upgrades</h3><h3 data-ru hidden>Улучшения</h3><p data-en>Flask I <span>+ Diamond Block →</span> Flask II</p><p data-ru hidden>Фляга I <span>+ Алмазный блок →</span> Фляга II</p><p data-en>Flask II <span>+ Recovery Compass →</span> Flask III</p><p data-ru hidden>Фляга II <span>+ Компас восстановления →</span> Фляга III</p><p data-en>Flask III <span>+ Totem of Undying →</span> Soul Flask</p><p data-ru hidden>Фляга III <span>+ Тотем бессмертия →</span> Фляга души</p><p class="muted" data-en>Valid stored XP is preserved through every upgrade.</p><p class="muted" data-ru hidden>Сохранённый XP корректной фляги переносится при каждом улучшении.</p></article>
+      </div>
+    </section>
+
+    <section id="mending" class="section split-section"><div><p class="section-kicker" data-en>Controls & Mending</p><p class="section-kicker" data-ru hidden>Управление и Починка</p><h2 data-en>Release XP where it helps first.</h2><h2 data-ru hidden>Высвобождайте XP туда, где он нужен сначала.</h2><div class="control-row"><kbd>Shift</kbd><span>+</span><kbd>RMB</kbd><p data-en>Store XP</p><p data-ru hidden>Сохранить XP</p></div><div class="control-row"><kbd>RMB</kbd><p data-en>Release XP</p><p data-ru hidden>Высвободить XP</p></div></div><aside class="callout gold"><p data-en><strong>Vanilla Mending first.</strong> Damaged eligible Mending gear is repaired before any remaining XP reaches the player bar. Release is contained and does not create a huge cloud of loose orbs.</p><p data-ru hidden><strong>Сначала ванильная Починка.</strong> Подходящее повреждённое снаряжение чинится раньше, чем оставшийся XP попадёт в шкалу игрока. Высвобождение не создаёт огромного облака шаров опыта.</p></aside></section>
+
+    <section id="soul" class="section soul-section"><p class="section-kicker">Soul Flask</p><h2 data-en>A reserve that can survive the worst moment.</h2><h2 data-ru hidden>Запас, который поможет в худший момент.</h2><div class="soul-layout"><div><ol class="steps"><li data-en>Craft it from Flask III and a Totem of Undying.</li><li data-ru hidden>Создайте её из Фляги опыта III и Тотема бессмертия.</li><li data-en>Fill or release it like Flask III.</li><li data-ru hidden>Заполняйте и высвобождайте её как Флягу опыта III.</li><li data-en>On real death, Totem resolution happens first.</li><li data-ru hidden>При настоящей смерти сначала проверяется Тотем.</li><li data-en>One Soul Flask captures fitting XP, becomes Flask III, and drops with normal items.</li><li data-ru hidden>Одна Фляга души сохраняет подходящий XP, становится Флягой опыта III и выпадает с обычными предметами.</li></ol><p class="warning" data-en>Recover the drop yourself: lava, the void, and item despawn can still destroy it. keepInventory leaves it armed.</p><p class="warning" data-ru hidden>Подберите предмет сами: лава, пустота и исчезновение предмета всё ещё могут его уничтожить. keepInventory оставляет флягу заряженной.</p></div><div class="flow" aria-label="Soul Flask death flow"><span data-en>Soul Flask + XP</span><span data-ru hidden>Фляга души + XP</span><b>↓</b><span data-en>Totem check</span><span data-ru hidden>Проверка Тотема</span><b>↓</b><span data-en>Real death: capture XP</span><span data-ru hidden>Настоящая смерть: сохранить XP</span><b>↓</b><strong data-en>Flask III in death drops</strong><strong data-ru hidden>Фляга опыта III в выпавших предметах</strong></div></div></section>
+
+    <section id="progression" class="section"><p class="section-kicker" data-en>Progression</p><p class="section-kicker" data-ru hidden>Прогресс</p><h2 data-en>Recipes discover naturally. Milestones tell the story.</h2><h2 data-ru hidden>Рецепты открываются естественно. Достижения отмечают путь.</h2><div class="advancement-flow"><span data-en>Experience Reserve</span><span data-ru hidden>Запас опыта</span><b>→</b><span data-en>Deeper Reserve</span><span data-ru hidden>Больше запаса</span><b>→</b><span data-en>Veteran Reserve</span><span data-ru hidden>Запас ветерана</span><b>→</b><span data-en>Second Chance</span><span data-ru hidden>Второй шанс</span></div><p data-en>Flask I becomes discoverable with amethyst; each owned flask reveals the next upgrade recipe.</p><p data-ru hidden>Рецепт Фляги I открывается с аметистом; каждая полученная фляга открывает следующий рецепт улучшения.</p></section>
+
+    <section id="faq" class="section"><p class="section-kicker">FAQ</p><h2 data-en>Good to know.</h2><h2 data-ru hidden>Полезно знать.</h2><div class="faq-grid">
+      <details open><summary data-en>Does it store levels or XP points?</summary><summary data-ru hidden>Хранятся уровни или очки XP?</summary><p data-en>Exact raw XP points. Level equivalents are capacity landmarks only.</p><p data-ru hidden>Точные очки XP. Эквиваленты уровней — только ориентиры вместимости.</p></details>
+      <details><summary data-en>What happens with Mending?</summary><summary data-ru hidden>Что происходит с Починкой?</summary><p data-en>Mending gets released XP first; the remainder goes to the player.</p><p data-ru hidden>Починка получает высвобождённый XP первой; остаток идёт игроку.</p></details>
+      <details><summary data-en>Does Soul Flask work with a Totem?</summary><summary data-ru hidden>Работает ли Фляга души с Тотемом?</summary><p data-en>Yes. A Totem resolves first; saved players do not consume the flask.</p><p data-ru hidden>Да. Сначала срабатывает Тотем; спасённый игрок не расходует флягу.</p></details>
+      <details><summary data-en>What about keepInventory and multiple Soul Flasks?</summary><summary data-ru hidden>Что с keepInventory и несколькими Флягами души?</summary><p data-en>keepInventory leaves insurance armed. Only one Soul Flask can trigger per death.</p><p data-ru hidden>keepInventory оставляет страховку заряженной. За одну смерть срабатывает только одна Фляга души.</p></details>
+      <details><summary data-en>Can a dropped Flask III burn or despawn?</summary><summary data-ru hidden>Может ли выпавшая Фляга III сгореть или исчезнуть?</summary><p data-en>Yes. Death insurance saves XP into an item; it does not make the item indestructible.</p><p data-ru hidden>Да. Страховка сохраняет XP в предмет, но не делает предмет неуничтожимым.</p></details>
+      <details><summary data-en>Does an upgrade preserve stored XP?</summary><summary data-ru hidden>Сохраняется ли XP при улучшении?</summary><p data-en>Yes, when upgrading a valid flask.</p><p data-ru hidden>Да, при улучшении корректной фляги.</p></details>
+      <details><summary data-en>Is the mod required on client and server?</summary><summary data-ru hidden>Нужен ли мод на клиенте и сервере?</summary><p data-en>Yes, install XP Reserve and Fabric API on both sides for multiplayer.</p><p data-ru hidden>Да, для мультиплеера установите XP Reserve и Fabric API на обе стороны.</p></details>
+      <details><summary data-en>Which versions are supported?</summary><summary data-ru hidden>Какие версии поддерживаются?</summary><p data-en>Minecraft 1.21.11 on Fabric, Java 21.</p><p data-ru hidden>Minecraft 1.21.11 на Fabric, Java 21.</p></details>
+    </div></section>
+
+    <section id="changelog" class="section"><p class="section-kicker" data-en>Changelog</p><p class="section-kicker" data-ru hidden>Журнал изменений</p><h2>v0.1.0</h2><div class="changelog-card"><p data-en><strong>First release candidate.</strong> Three reusable flask tiers, exact raw-XP storage, fill visuals and full glint, Mending-aware release, Soul Flask insurance, vanilla-like recipes and advancements, plus English/Russian support.</p><p data-ru hidden><strong>Первый кандидат в релизы.</strong> Три многоразовых фляги, точное хранение XP, визуальные состояния и блеск полной фляги, высвобождение с учётом Починки, страховка Фляги души, ванильные рецепты и достижения, а также русский и английский языки.</p></div></section>
+  </main>
+  <footer><div class="container"><strong>Mentalitys | XP Reserve</strong><span data-en>Fabric mod for Minecraft · v0.1.0 · All Rights Reserved</span><span data-ru hidden>Fabric-мод для Minecraft · v0.1.0 · Все права защищены</span><a href="https://github.com/sqwiziiy/XP-Reserve" target="_blank" rel="noreferrer">GitHub ↗</a></div></footer>
+  <script>
+    (() => {
+      const key = 'xp-reserve-language';
+      const buttons = [...document.querySelectorAll('[data-language]')];
+      const setLanguage = (language) => {
+        document.documentElement.lang = language;
+        document.querySelectorAll('[data-en]').forEach((node) => { node.hidden = language !== 'en'; });
+        document.querySelectorAll('[data-ru]').forEach((node) => { node.hidden = language !== 'ru'; });
+        buttons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.language === language)));
+        localStorage.setItem(key, language);
+      };
+      const stored = localStorage.getItem(key);
+      setLanguage(stored === 'ru' || (!stored && navigator.language.toLowerCase().startsWith('ru')) ? 'ru' : 'en');
+      buttons.forEach((button) => button.addEventListener('click', () => setLanguage(button.dataset.language)));
+    })();
+  </script>
+</body>
+</html>
