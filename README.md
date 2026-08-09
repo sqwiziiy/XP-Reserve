@@ -16,7 +16,7 @@ Reusable Fabric XP flasks that store exact experience, release it through vanill
 
 - [Documentation](https://sqwiziiy.github.io/XP-Reserve/)
 - [Issues](https://github.com/sqwiziiy/XP-Reserve/issues)
-- [Modrinth](https://modrinth.com/project/xp-reserve)
+- [Modrinth](https://modrinth.com/project/mentalitys-xp-reserve)
 ## Supported versions
 
 | Minecraft | Source branch | Java | Release |
