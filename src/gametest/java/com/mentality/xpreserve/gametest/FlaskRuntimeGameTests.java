@@ -27,6 +27,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeBookCategories;
+import net.minecraft.world.item.crafting.display.RecipeDisplayEntry;
+import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.GameType;
 
@@ -424,7 +427,27 @@ public final class FlaskRuntimeGameTests {
                 Identifier.fromNamespaceAndPath("xp-reserve", recipePath));
         Recipe<?> recipe = helper.getLevel().getServer().getRecipeManager().byKey(recipeKey)
                 .orElseThrow(() -> new IllegalStateException("Missing recipe: " + recipeKey.identifier())).value();
+        helper.assertTrue(recipe instanceof net.minecraft.world.item.crafting.ShapelessRecipe,
+                "Upgrade must expose the standard vanilla shapeless crafting contract: " + recipeKey.identifier());
+        helper.assertTrue(!recipe.isSpecial(), "Upgrade must not be hidden as a special recipe: " + recipeKey.identifier());
+        helper.assertValueEqual(RecipeBookCategories.CRAFTING_MISC, recipe.recipeBookCategory(),
+                "Upgrade must appear in the crafting-misc recipe-book category: " + recipeKey.identifier());
+        helper.assertValueEqual(2, recipe.placementInfo().ingredients().size(),
+                "Upgrade must expose exactly two standard placement ingredients: " + recipeKey.identifier());
         helper.assertTrue(!recipe.display().isEmpty(), "Recipe must expose a client recipe-book display: " + recipeKey.identifier());
+
+        java.util.List<RecipeDisplayEntry> syncedDisplays = new java.util.ArrayList<>();
+        helper.getLevel().getServer().getRecipeManager().listDisplaysForRecipe(recipeKey, syncedDisplays::add);
+        helper.assertValueEqual(1, syncedDisplays.size(),
+                "Recipe manager must create one client-facing display entry: " + recipeKey.identifier());
+        RecipeDisplayEntry synced = syncedDisplays.getFirst();
+        helper.assertValueEqual(RecipeBookCategories.CRAFTING_MISC, synced.category(),
+                "Client-facing entry must retain crafting-misc category: " + recipeKey.identifier());
+        helper.assertTrue(synced.craftingRequirements().isPresent()
+                        && synced.craftingRequirements().orElseThrow().size() == 2,
+                "Client-facing entry must retain both crafting ingredients: " + recipeKey.identifier());
+        helper.assertTrue(synced.display() instanceof ShapelessCraftingRecipeDisplay,
+                "Client-facing entry must use vanilla shapeless display data: " + recipeKey.identifier());
 
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
         helper.assertTrue(player.getAdvancements().award(advancement, criterion),
