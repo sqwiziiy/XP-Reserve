@@ -42,6 +42,8 @@ loom {
 
 repositories {
     mavenCentral()
+    maven { url = "https://maven.blamejared.com" }
+    maven { url = "https://maven.shedaniel.me/" }
 }
 
 dependencies {
@@ -49,6 +51,11 @@ dependencies {
     mappings loom.officialMojangMappings()
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    // Optional client viewer APIs. Loom remaps these mod artifacts into this
+    // project's official Mojang mappings; neither is packaged or required.
+    modCompileOnly("mezz.jei:jei-1.21.11-fabric:27.22.0.66") { transitive = false }
+    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:21.11.816") { transitive = false }
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.11.0"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.11.0"
