@@ -101,4 +101,4 @@ Minecraft 1.21.1 and 1.20.1 are not supported yet.
 
 ## License
 
-The mod metadata currently declares **All Rights Reserved**. A root `LICENSE` file has not yet been published; the owner should confirm the public license text before distribution.
+License: [CC0 1.0 Universal](LICENSE).
