@@ -1,0 +1,19 @@
+{
+  "parent": "xp-reserve:deeper_reserve",
+  "display": {
+    "icon": {"id": "xp-reserve:flask_iii"},
+    "title": {"translate": "advancement.xp-reserve.veteran_reserve.title"},
+    "description": {"translate": "advancement.xp-reserve.veteran_reserve.description"},
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "has_flask_iii": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {"items": [{"items": "xp-reserve:flask_iii"}]}
+    }
+  },
+  "requirements": [["has_flask_iii"]]
+}

@@ -4,7 +4,7 @@
   "item.xp-reserve.flask_iii": "Experience Flask III",
   "item.xp-reserve.soul_flask": "Soul Flask",
   "tooltip.xp-reserve.flask.stored": "Stored: %s / %s XP",
-  "tooltip.xp-reserve.flask.capacity": "Capacity: Level %s",
+  "tooltip.xp-reserve.flask.capacity": "Capacity: Level %s from zero",
   "tooltip.xp-reserve.flask.percent": "%s%% full",
   "tooltip.xp-reserve.flask.empty": "Empty",
   "tooltip.xp-reserve.flask.low": "Low",
@@ -15,5 +15,13 @@
   "tooltip.xp-reserve.flask.withdraw": "Right Click: Release XP",
   "tooltip.xp-reserve.flask.invalid": "Invalid flask state",
   "tooltip.xp-reserve.soul.ready": "Death Insurance: Ready",
-  "tooltip.xp-reserve.soul.death": "On death: saves XP, then becomes Flask III"
+  "tooltip.xp-reserve.soul.death": "On death, saves XP and becomes Flask III",
+  "advancement.xp-reserve.root.title": "XP Reserve",
+  "advancement.xp-reserve.root.description": "Store experience safely for the journey ahead.",
+  "advancement.xp-reserve.deeper_reserve.title": "Deeper Reserve",
+  "advancement.xp-reserve.deeper_reserve.description": "Upgrade your reserve beyond thirty levels.",
+  "advancement.xp-reserve.veteran_reserve.title": "Veteran Reserve",
+  "advancement.xp-reserve.veteran_reserve.description": "Prepare a reserve for long survival runs.",
+  "advancement.xp-reserve.second_chance.title": "Second Chance",
+  "advancement.xp-reserve.second_chance.description": "Arm your experience reserve against death."
 }

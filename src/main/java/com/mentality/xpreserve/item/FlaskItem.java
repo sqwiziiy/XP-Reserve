@@ -18,6 +18,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.world.item.component.TooltipDisplay;
 import java.util.function.Consumer;
 import net.minecraft.world.level.Level;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 
 /** Reusable, server-authoritative experience flask. */
 public final class FlaskItem extends Item {
@@ -109,6 +111,7 @@ public final class FlaskItem extends Item {
         // validation, and the bridge guards vanilla's bounded integer XP representation.
         FlaskStoredXp.set(stack, transaction.newStoredRawXp());
         PlayerXp.applyExactRawXp(player, transaction.oldPlayerRawXp(), transaction.newPlayerRawXp());
+        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 0.45F, 0.9F);
         return InteractionResult.SUCCESS_SERVER;
     }
 }

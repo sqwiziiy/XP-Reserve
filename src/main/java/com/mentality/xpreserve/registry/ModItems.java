@@ -13,6 +13,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.CustomModelData;
 import java.util.List;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.world.item.CreativeModeTabs;
 
 /** Registers XP Reserve items. */
 public final class ModItems {
@@ -52,5 +54,11 @@ public final class ModItems {
 
     /** Forces class initialization during common mod bootstrap. */
     public static void initialize() {
+        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(entries -> {
+            entries.accept(FLASK_I);
+            entries.accept(FLASK_II);
+            entries.accept(FLASK_III);
+            entries.accept(SOUL_FLASK);
+        });
     }
 }

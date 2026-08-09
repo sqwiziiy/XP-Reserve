@@ -109,6 +109,23 @@ public final class FlaskRuntimeGameTests {
     }
 
     @GameTest
+    public void advancementsAndRecipeUnlocksLoadWithTheirProgressionParents(GameTestHelper helper) {
+        assertAdvancementParent(helper, "root", null);
+        assertAdvancementParent(helper, "deeper_reserve", "xp-reserve:root");
+        assertAdvancementParent(helper, "veteran_reserve", "xp-reserve:deeper_reserve");
+        assertAdvancementParent(helper, "second_chance", "xp-reserve:veteran_reserve");
+
+        for (String recipeUnlock : java.util.List.of(
+                "recipes/misc/flask_i", "recipes/misc/flask_i_upgrade",
+                "recipes/misc/flask_ii_upgrade", "recipes/misc/soul_flask_upgrade")) {
+            Identifier id = Identifier.fromNamespaceAndPath("xp-reserve", recipeUnlock);
+            helper.assertTrue(helper.getLevel().getServer().getAdvancements().get(id) != null,
+                    "Recipe unlock advancement must load: " + id);
+        }
+        helper.succeed();
+    }
+
+    @GameTest
     public void fullOnlyGlintAndVisualMirrorsAreDerivedFromStoredXp(GameTestHelper helper) {
         for (net.minecraft.world.item.Item item : java.util.List.of(ModItems.FLASK_I, ModItems.FLASK_II, ModItems.FLASK_III, ModItems.SOUL_FLASK)) {
             FlaskItem flaskItem = (FlaskItem) item;
@@ -381,6 +398,19 @@ public final class FlaskRuntimeGameTests {
                 .orElseThrow(() -> new IllegalStateException("Missing loaded recipe: " + key.identifier())).value();
         if (recipe instanceof CraftingRecipe craftingRecipe) return craftingRecipe;
         throw new IllegalStateException("Loaded recipe is not a crafting recipe: " + key.identifier());
+    }
+
+    private static void assertAdvancementParent(GameTestHelper helper, String path, String expectedParent) {
+        Identifier id = Identifier.fromNamespaceAndPath("xp-reserve", path);
+        net.minecraft.advancements.AdvancementHolder advancement = helper.getLevel().getServer().getAdvancements().get(id);
+        helper.assertTrue(advancement != null, "Advancement must load: " + id);
+        java.util.Optional<Identifier> actualParent = advancement.value().parent();
+        if (expectedParent == null) {
+            helper.assertTrue(actualParent.isEmpty(), "Root advancement must not have a parent");
+        } else {
+            helper.assertValueEqual(Identifier.parse(expectedParent), actualParent.orElseThrow(),
+                    "Advancement parent must match for " + id);
+        }
     }
 
     private static void assertDeposit(

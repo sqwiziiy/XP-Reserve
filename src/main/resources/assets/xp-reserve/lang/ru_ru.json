@@ -4,7 +4,7 @@
   "item.xp-reserve.flask_iii": "Фляга опыта III",
   "item.xp-reserve.soul_flask": "Фляга души",
   "tooltip.xp-reserve.flask.stored": "Сохранено: %s / %s XP",
-  "tooltip.xp-reserve.flask.capacity": "Вместимость: уровень %s",
+  "tooltip.xp-reserve.flask.capacity": "Вместимость: уровень %s с нуля",
   "tooltip.xp-reserve.flask.percent": "%s%% заполнено",
   "tooltip.xp-reserve.flask.empty": "Пусто",
   "tooltip.xp-reserve.flask.low": "Низкое заполнение",
@@ -15,5 +15,13 @@
   "tooltip.xp-reserve.flask.withdraw": "ПКМ: высвободить опыт",
   "tooltip.xp-reserve.flask.invalid": "Некорректное состояние фляги",
   "tooltip.xp-reserve.soul.ready": "Страховка от смерти: готова",
-  "tooltip.xp-reserve.soul.death": "При смерти сохраняет опыт и становится Флягой опыта III"
+  "tooltip.xp-reserve.soul.death": "При смерти сохраняет опыт и становится Флягой опыта III",
+  "advancement.xp-reserve.root.title": "Запас опыта",
+  "advancement.xp-reserve.root.description": "Безопасно сохраните опыт для будущих приключений.",
+  "advancement.xp-reserve.deeper_reserve.title": "Больше запаса",
+  "advancement.xp-reserve.deeper_reserve.description": "Улучшите запас выше тридцатого уровня.",
+  "advancement.xp-reserve.veteran_reserve.title": "Запас ветерана",
+  "advancement.xp-reserve.veteran_reserve.description": "Подготовьте запас для долгих вылазок.",
+  "advancement.xp-reserve.second_chance.title": "Второй шанс",
+  "advancement.xp-reserve.second_chance.description": "Защитите запас опыта от смерти."
 }

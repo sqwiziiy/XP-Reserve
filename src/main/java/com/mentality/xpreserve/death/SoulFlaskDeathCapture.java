@@ -9,6 +9,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 
 /** Pre-death capture using the Soul Flask stack itself as all persistent insurance state. */
 public final class SoulFlaskDeathCapture {
@@ -51,6 +53,7 @@ public final class SoulFlaskDeathCapture {
         PlayerXp.applyExactRawXp(player, playerXp, plan.remainingPlayerXp());
         if (hand != null) player.setItemInHand(hand, spent);
         else player.getInventory().setItem(slot, spent);
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SOUL_ESCAPE, SoundSource.PLAYERS, 0.55F, 1.0F);
         return true;
     }
 
