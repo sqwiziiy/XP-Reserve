@@ -14,9 +14,9 @@
 
 ## Ссылки
 
-- Документация — будет доступна после включения GitHub Pages
-- [Ошибки и предложения](https://github.com/sqwiziiy/XP-Reserve/issues)
-- Modrinth — скоро
+- [Документация](https://sqwiziiy.github.io/XP-Reserve/)
+- [Ошибки](https://github.com/sqwiziiy/XP-Reserve/issues)
+- [Modrinth](https://modrinth.com/project/xp-reserve)
 
 ## Поддерживаемые версии
 
