@@ -1,1 +1,0 @@
-{"required":true,"package":"com.mentality.xpreserve.mixin","compatibilityLevel":"JAVA_21","mixins":["ServerPlayerDeathMixin"],"injectors":{"defaultRequire":1}}
