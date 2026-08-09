@@ -16,10 +16,10 @@
 
 - [Документация](https://sqwiziiy.github.io/XP-Reserve/)
 - [Ошибки](https://github.com/sqwiziiy/XP-Reserve/issues)
-- [Modrinth](https://modrinth.com/project/xp-reserve)
+- [Modrinth](https://modrinth.com/project/mentalitys-xp-reserve)
 
 ## Поддерживаемые версии
-
+mentalitys-xp-reserve
 | Minecraft | Ветка исходного кода | Java | Релиз |
 | --- | --- | ---: | --- |
 | 1.21.11 | `0.1/1.21.11` | 21 | 0.1.0 |
