@@ -56,6 +56,8 @@ dependencies {
     // project's official Mojang mappings; neither is packaged or required.
     modCompileOnly("mezz.jei:jei-1.21.11-fabric:27.22.0.66") { transitive = false }
     modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:21.11.816") { transitive = false }
+    modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:21.11.816") { transitive = false }
+    modCompileOnly("dev.architectury:architectury-fabric:19.0.1") { transitive = false }
 
     testImplementation "org.junit.jupiter:junit-jupiter:5.11.0"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.11.0"

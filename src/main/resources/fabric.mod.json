@@ -15,6 +15,12 @@
     ],
     "client": [
       "com.mentality.xpreserve.client.XpReserveClient"
+    ],
+    "jei_mod_plugin": [
+      "com.mentality.xpreserve.compat.jei.XpReserveJeiPlugin"
+    ],
+    "rei_client": [
+      "com.mentality.xpreserve.compat.rei.XpReserveReiClientPlugin"
     ]
   },
   "mixins": ["xp-reserve.mixins.json"],
