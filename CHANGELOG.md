@@ -1,14 +1,16 @@
 # Changelog
 
-## Unreleased
+## 0.1.0 — Release candidate
 
 ### Added
-- Reusable Experience Flask I, II, and III tiers with exact raw-XP storage.
-- Stored-XP tooltips, fill-state visuals, and full-flask glint.
-- Vanilla Mending-aware XP release.
-- Soul Flask death insurance that converts to Flask III after a successful capture.
-- XP Reserve advancements and progressive recipe-book discovery.
-- Restrained vanilla interaction sounds and Tools & Utilities creative-tab placement.
 
-### Fixed
-- Reconstruct player XP from visible level/progress when vanilla's total XP field is stale after level commands.
+- Experience Flask I, II, and III with capacities of 1,395, 5,345, and 30,970 raw XP.
+- Partial filling, exact stored-XP tooltips, five fill visuals, and full-flask glint.
+- Mending-aware release that repairs eligible gear before returning remaining XP to the player.
+- Soul Flask death insurance, crafted from Flask III and a Totem of Undying.
+- Vanilla-like recipes, recipe-book discovery, XP Reserve advancements, English/Russian localization, and restrained interaction sounds.
+
+### Correctness
+
+- Player XP is handled exactly from the visible level/progress state, including command-driven states where the vanilla total field is stale.
+- Flask transfers, upgrades, Mending release, and Soul capture preserve XP according to their documented contracts.
