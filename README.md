@@ -6,7 +6,7 @@ Portable, reusable experience flasks for Fabric. XP Reserve keeps experience as 
 
 ## Current release
 
-**0.1.0** — release candidate
+**0.1.0** — current release
 
 - Minecraft **1.21.11**
 - **Fabric**
@@ -95,7 +95,7 @@ Stored XP is preserved when upgrading a valid flask.
 
 | Minecraft | Loader | Java | Status |
 |---|---|---:|---|
-| 1.21.11 | Fabric | 21 | Current release candidate |
+| 1.21.11 | Fabric | 21 | Current release |
 
 Minecraft 1.21.1 and 1.20.1 are not supported yet.
 

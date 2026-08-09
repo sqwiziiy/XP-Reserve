@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.1.0 — Release candidate
+## 0.1.0 — First release
 
 ### Added
 
@@ -9,6 +9,7 @@
 - Mending-aware release that repairs eligible gear before returning remaining XP to the player.
 - Soul Flask death insurance, crafted from Flask III and a Totem of Undying.
 - Vanilla-like recipes, recipe-book discovery, XP Reserve advancements, English/Russian localization, and restrained interaction sounds.
+- Optional JEI and REI crafting-recipe display compatibility.
 
 ### Correctness
 
