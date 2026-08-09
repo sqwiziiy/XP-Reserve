@@ -85,6 +85,22 @@ public final class XpMath {
         return new XpState(totalXp, level, xpIntoLevel, xpNeededForNextLevelAsLong(level));
     }
 
+    /**
+     * Reconstructs raw XP from vanilla's visible level/progress representation.
+     * Vanilla stores progress as the float produced by {@code points / needed}; selecting the
+     * nearest valid integer point reverses that conversion without systematic rounding drift.
+     */
+    public static long totalXpFromLevelProgress(int level, float progress) {
+        requireNonNegativeLevel(level);
+        if (!Float.isFinite(progress) || progress < 0.0F || progress >= 1.0F) {
+            throw new IllegalArgumentException("Vanilla experience progress must be finite and in [0, 1): " + progress);
+        }
+        int needed = xpNeededForNextLevel(level);
+        int nearestPoint = Math.round(progress * needed);
+        int intoLevel = Math.min(needed - 1, Math.max(0, nearestPoint));
+        return Math.addExact(totalXpAtLevel(level), intoLevel);
+    }
+
     static long xpNeededForNextLevelAsLong(int level) {
         requireNonNegativeLevel(level);
         if (level <= 15) {

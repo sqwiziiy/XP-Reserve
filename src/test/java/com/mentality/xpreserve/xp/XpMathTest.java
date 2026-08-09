@@ -85,12 +85,38 @@ class XpMathTest {
     }
 
     @org.junit.jupiter.api.Test
+    void vanillaFloatProgressReconstructsEveryRepresentativeRawPointExactly() {
+        for (int level = 0; level <= 200; level++) {
+            int needed = XpMath.xpNeededForNextLevel(level);
+            for (int intoLevel : new int[] {0, 1, needed / 2, needed - 1}) {
+                long rawXp = XpMath.totalXpAtLevel(level) + intoLevel;
+                float progress = (float) intoLevel / needed;
+                assertEquals(rawXp, XpMath.totalXpFromLevelProgress(level, progress),
+                        "level=" + level + ", intoLevel=" + intoLevel);
+            }
+            long nextLevel = XpMath.totalXpAtLevel(level + 1);
+            assertEquals(nextLevel, XpMath.totalXpFromLevelProgress(level + 1, 0.0F),
+                    "next-level boundary after level=" + level);
+        }
+    }
+
+    @org.junit.jupiter.api.Test
+    void reconstructsOwnerCommandDrivenDivergentStatesFromVisibleXp() {
+        assertEquals(1_395L, XpMath.totalXpFromLevelProgress(30, 0.0F));
+        assertEquals(1_443L, XpMath.totalXpFromLevelProgress(30, 0.42857128F));
+        assertEquals(24_045L, XpMath.totalXpFromLevelProgress(90, 0.0F));
+        assertEquals(91L, XpMath.totalXpFromLevelProgress(7, 0.0F));
+    }
+
+    @org.junit.jupiter.api.Test
     void negativeInputsAreRejected() {
         assertThrows(IllegalArgumentException.class, () -> XpMath.xpNeededForNextLevel(-1));
         assertThrows(IllegalArgumentException.class, () -> XpMath.totalXpAtLevel(-1));
         assertThrows(IllegalArgumentException.class, () -> XpMath.levelFromTotalXp(-1));
         assertThrows(IllegalArgumentException.class, () -> XpMath.xpIntoLevel(-1));
         assertThrows(IllegalArgumentException.class, () -> XpMath.stateFromTotalXp(-1));
+        assertThrows(IllegalArgumentException.class, () -> XpMath.totalXpFromLevelProgress(-1, 0));
+        assertThrows(IllegalArgumentException.class, () -> XpMath.totalXpFromLevelProgress(0, 1));
     }
 
     @org.junit.jupiter.api.Test

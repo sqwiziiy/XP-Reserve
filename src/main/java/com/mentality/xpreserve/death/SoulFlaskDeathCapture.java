@@ -1,7 +1,7 @@
 package com.mentality.xpreserve.death;
 
+import com.mentality.xpreserve.XpReserveMod;
 import com.mentality.xpreserve.item.FlaskStoredXp;
-import com.mentality.xpreserve.item.FlaskVisuals;
 import com.mentality.xpreserve.item.FlaskItem;
 import com.mentality.xpreserve.registry.ModItems;
 import com.mentality.xpreserve.xp.PlayerXp;
@@ -16,40 +16,42 @@ public final class SoulFlaskDeathCapture {
 
     public static boolean capture(ServerPlayer player) {
         long playerXp = PlayerXp.currentRawXp(player);
-        if (playerXp == 0) return false;
+        if (playerXp == 0) {
+            return false;
+        }
         Inventory inventory = player.getInventory();
         int selectedSlot = inventory.getSelectedSlot();
-        if (tryCapture(player, InteractionHand.MAIN_HAND, player.getMainHandItem(), playerXp)) return true;
-        if (tryCapture(player, InteractionHand.OFF_HAND, player.getOffhandItem(), playerXp)) return true;
+        if (tryCapture(player, InteractionHand.MAIN_HAND, -1, "mainhand", player.getMainHandItem(), playerXp)) return true;
+        if (tryCapture(player, InteractionHand.OFF_HAND, Inventory.SLOT_OFFHAND, "offhand", player.getOffhandItem(), playerXp)) return true;
         for (int slot = 0; slot < Inventory.getSelectionSize(); slot++) {
-            if (slot != selectedSlot && tryCapture(player, slot, inventory.getItem(slot), playerXp)) return true;
+            if (slot != selectedSlot && tryCapture(player, null, slot, "hotbar", inventory.getItem(slot), playerXp)) return true;
         }
         for (int slot = Inventory.getSelectionSize(); slot < Inventory.SLOT_OFFHAND; slot++) {
-            if (tryCapture(player, slot, inventory.getItem(slot), playerXp)) return true;
+            if (tryCapture(player, null, slot, "inventory", inventory.getItem(slot), playerXp)) return true;
         }
         return false;
     }
 
-    private static boolean tryCapture(ServerPlayer player, InteractionHand hand, ItemStack soul, long playerXp) {
-        return tryCapture(player, hand, -1, soul, playerXp);
-    }
-
-    private static boolean tryCapture(ServerPlayer player, int slot, ItemStack soul, long playerXp) {
-        return tryCapture(player, null, slot, soul, playerXp);
-    }
-
-    private static boolean tryCapture(ServerPlayer player, InteractionHand hand, int slot, ItemStack soul, long playerXp) {
+    private static boolean tryCapture(ServerPlayer player, InteractionHand hand, int slot, String slotType, ItemStack soul,
+            long playerXp) {
         if (!soul.is(ModItems.SOUL_FLASK)) return false;
         long stored;
-        try { stored = FlaskStoredXp.get(soul); } catch (IllegalStateException ignored) { return false; }
+        try {
+            stored = FlaskStoredXp.get(soul);
+        } catch (IllegalStateException ignored) {
+            XpReserveMod.LOGGER.warn("Soul Flask at {} slot {} has an invalid stored XP component; skipping capture", slotType, slot);
+            return false;
+        }
         SoulFlaskCapturePlan plan = SoulFlaskCapturePlan.create(playerXp, stored, ((FlaskItem) ModItems.SOUL_FLASK).capacity());
-        if (!plan.capturedAnything()) return false;
+        if (!plan.capturedAnything()) {
+            return false;
+        }
         ItemStack spent = soul.transmuteCopy(ModItems.FLASK_III, 1);
         FlaskStoredXp.set(spent, plan.resultingStoredXp());
-        FlaskVisuals.refresh(spent);
+        PlayerXp.applyExactRawXp(player, playerXp, plan.remainingPlayerXp());
         if (hand != null) player.setItemInHand(hand, spent);
         else player.getInventory().setItem(slot, spent);
-        PlayerXp.applyExactRawXp(player, playerXp, plan.remainingPlayerXp());
         return true;
     }
+
 }

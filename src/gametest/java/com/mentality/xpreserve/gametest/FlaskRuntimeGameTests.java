@@ -7,6 +7,7 @@ import com.mentality.xpreserve.item.FlaskFillState;
 import com.mentality.xpreserve.item.FlaskVisuals;
 import com.mentality.xpreserve.registry.ModItems;
 import com.mentality.xpreserve.xp.PlayerXp;
+import com.mentality.xpreserve.xp.XpMath;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.NbtOps;
@@ -27,6 +28,7 @@ import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.gamerules.GameRules;
+import net.minecraft.world.level.GameType;
 
 /** Runtime acceptance tests for the production Flask I registration and interaction path. */
 public final class FlaskRuntimeGameTests {
@@ -140,6 +142,8 @@ public final class FlaskRuntimeGameTests {
         player.die(helper.getLevel().damageSources().genericKill());
         ItemStack dropped = onlyDropped(helper, ModItems.FLASK_III);
         helper.assertValueEqual(1_000L, FlaskStoredXp.get(dropped), "Real death must drop one Flask III with captured XP");
+        assertVanillaXpState(helper, player, 0, "Full death capture");
+        helper.assertValueEqual(0L, experienceOrbValue(helper), "Full death capture must create no vanilla death XP orbs");
         helper.assertValueEqual(0L, helper.getEntities(EntityType.ITEM).stream().filter(item -> item.getItem().is(ModItems.SOUL_FLASK)).count(),
                 "Real death must not leave the armed Soul Flask in drops");
         helper.succeed();
@@ -157,12 +161,38 @@ public final class FlaskRuntimeGameTests {
     }
 
     @GameTest
+    public void soulFlaskLowRemainderUsesPostCaptureVanillaReward(GameTestHelper helper) {
+        setKeepInventory(helper, false);
+        // 1000 raw XP is level 26, so its vanilla reward is capped at 100. Filling all but
+        // 901 Soul capacity leaves 99 raw XP (level 7), whose vanilla reward is 49.
+        ServerPlayer insured = playerWithFlask(helper, ModItems.SOUL_FLASK, 1_000, 30_069);
+        insured.die(helper.getLevel().damageSources().genericKill());
+        long insuredReward = experienceOrbValue(helper);
+        helper.assertValueEqual(49L, insuredReward, "Low post-capture remainder must use its uncapped 49-XP vanilla reward");
+        helper.assertValueEqual(30_970L, FlaskStoredXp.get(onlyDropped(helper, ModItems.FLASK_III)), "Soul Flask must capture the 901 free capacity");
+        assertVanillaXpState(helper, insured, 99, "Low-remainder capture");
+
+        helper.killAllEntitiesOfClass(ExperienceOrb.class);
+        ServerPlayer baseline = helper.makeMockServerPlayerInLevel();
+        positionInTest(helper, baseline);
+        baseline.getAbilities().instabuild = false;
+        baseline.getAbilities().invulnerable = false;
+        baseline.giveExperiencePoints(99);
+        baseline.die(helper.getLevel().damageSources().genericKill());
+        helper.assertValueEqual(49L, experienceOrbValue(helper), "Vanilla 99-XP baseline must have the same 49-XP reward");
+        helper.assertTrue(insuredReward != 100L, "Post-capture reward must differ from the pre-capture 100-XP reward");
+        helper.succeed();
+    }
+
+    @GameTest
     public void soulFlaskPartialPrefillAndZeroXpFollowExactDeathContract(GameTestHelper helper) {
         setKeepInventory(helper, false);
         ServerPlayer partial = playerWithFlask(helper, ModItems.SOUL_FLASK, 5_000, 10_000);
         partial.die(helper.getLevel().damageSources().genericKill());
         helper.assertValueEqual(15_000L, FlaskStoredXp.get(onlyDropped(helper, ModItems.FLASK_III)),
                 "Partial Soul Flask prefill must retain old XP and capture all 5000 player XP");
+        assertVanillaXpState(helper, partial, 0, "Partial full capture");
+        helper.assertValueEqual(0L, experienceOrbValue(helper), "Partial full capture must create no vanilla death XP orbs");
 
         ServerPlayer zero = playerWithFlask(helper, ModItems.SOUL_FLASK, 0, 0);
         zero.die(helper.getLevel().damageSources().genericKill());
@@ -170,6 +200,65 @@ public final class FlaskRuntimeGameTests {
                 .filter(entity -> entity.getItem().is(ModItems.SOUL_FLASK)).toList();
         helper.assertValueEqual(1, souls.size(), "Zero XP death must leave Soul Flask armed");
         helper.assertValueEqual(0L, FlaskStoredXp.get(souls.getFirst().getItem()), "Zero XP death must not change stored XP");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void soulFlaskDeathUsesVisibleXpWhenTotalExperienceIsStale(GameTestHelper helper) {
+        setKeepInventory(helper, false);
+        ServerPlayer levelThirty = playerWithFlask(helper, ModItems.SOUL_FLASK, 0, 0);
+        setVisibleXp(levelThirty, 100, 30, 0.42857128F);
+        helper.assertValueEqual(1_443L, PlayerXp.currentRawXp(levelThirty), "30-level visible XP must not read stale totalExperience=100");
+        levelThirty.die(helper.getLevel().damageSources().genericKill());
+        helper.assertValueEqual(1_443L, FlaskStoredXp.get(onlyDropped(helper, ModItems.FLASK_III)), "Soul death must capture reconstructed 30-level XP");
+        helper.assertValueEqual(0L, experienceOrbValue(helper), "Full reconstructed capture must not leak death XP");
+        helper.killAllEntitiesOfClass(ItemEntity.class);
+
+        ServerPlayer levelNinety = playerWithFlask(helper, ModItems.SOUL_FLASK, 0, 100);
+        setVisibleXp(levelNinety, 0, 90, 0.0F);
+        helper.assertValueEqual(24_045L, PlayerXp.currentRawXp(levelNinety), "90-level visible XP must not read stale totalExperience=0");
+        levelNinety.die(helper.getLevel().damageSources().genericKill());
+        helper.assertValueEqual(24_145L, FlaskStoredXp.get(onlyDropped(helper, ModItems.FLASK_III)), "Partial Soul Flask must add reconstructed 90-level XP");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void depositsUseVisibleXpWhenTotalExperienceIsStale(GameTestHelper helper) {
+        ServerPlayer flaskIPlayer = playerWithFlask(helper, ModItems.FLASK_I, 0, 0);
+        setVisibleXp(flaskIPlayer, 100, 30, 0.42857128F);
+        flaskIPlayer.setShiftKeyDown(true);
+        ((FlaskItem) ModItems.FLASK_I).use(helper.getLevel(), flaskIPlayer, InteractionHand.MAIN_HAND);
+        helper.assertValueEqual(FlaskTier.I.capacity(), FlaskStoredXp.get(flaskIPlayer.getMainHandItem()), "Flask I deposit must use visible 1443 XP");
+        assertVanillaXpState(helper, flaskIPlayer, 48, "Flask I divergent-state deposit");
+
+        ServerPlayer soulPlayer = playerWithFlask(helper, ModItems.SOUL_FLASK, 0, 0);
+        setVisibleXp(soulPlayer, 100, 30, 0.42857128F);
+        soulPlayer.setShiftKeyDown(true);
+        ((FlaskItem) ModItems.SOUL_FLASK).use(helper.getLevel(), soulPlayer, InteractionHand.MAIN_HAND);
+        helper.assertValueEqual(1_443L, FlaskStoredXp.get(soulPlayer.getMainHandItem()), "Soul deposit must use reconstructed visible XP");
+        assertVanillaXpState(helper, soulPlayer, 0, "Soul divergent-state deposit");
+
+        ServerPlayer levelThirtyZeroProgress = playerWithFlask(helper, ModItems.FLASK_I, 0, 0);
+        setVisibleXp(levelThirtyZeroProgress, 0, 30, 0.0F);
+        helper.assertValueEqual(1_395L, PlayerXp.currentRawXp(levelThirtyZeroProgress),
+                "Visible level 30 must win over totalExperience=0");
+
+        ServerPlayer levelSeven = playerWithFlask(helper, ModItems.FLASK_I, 0, 0);
+        setVisibleXp(levelSeven, 999_999, 7, 0.0F);
+        helper.assertValueEqual(91L, PlayerXp.currentRawXp(levelSeven),
+                "Visible level 7 must win over totalExperience=999999");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void normalReleaseUsesVisibleXpWhenTotalExperienceIsStale(GameTestHelper helper) {
+        ServerPlayer player = playerWithFlask(helper, ModItems.SOUL_FLASK, 0, 500);
+        setVisibleXp(player, 100, 30, 0.42857128F);
+
+        ((FlaskItem) ModItems.SOUL_FLASK).use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
+
+        helper.assertValueEqual(0L, FlaskStoredXp.get(player.getMainHandItem()), "Normal release must empty the Soul Flask");
+        assertVanillaXpState(helper, player, 1_943, "Normal release from divergent visible XP");
         helper.succeed();
     }
 
@@ -377,8 +466,7 @@ public final class FlaskRuntimeGameTests {
     private static ServerPlayer playerWithFlask(GameTestHelper helper, net.minecraft.world.item.Item item, long playerXp, long storedXp) {
         ServerPlayer player = helper.makeMockServerPlayerInLevel();
         positionInTest(helper, player);
-        player.getAbilities().instabuild = false;
-        player.getAbilities().invulnerable = false;
+        player.setGameMode(GameType.SURVIVAL);
         player.giveExperiencePoints(Math.toIntExact(playerXp));
         ItemStack flask = new ItemStack(item);
         FlaskStoredXp.set(flask, storedXp);
@@ -392,10 +480,26 @@ public final class FlaskRuntimeGameTests {
         player.teleportTo(position.getX() + 0.5, position.getY(), position.getZ() + 0.5);
     }
 
+    private static void setVisibleXp(ServerPlayer player, int totalExperienceField, int level, float progress) {
+        player.totalExperience = totalExperienceField;
+        player.experienceLevel = level;
+        player.experienceProgress = progress;
+    }
+
     private static void setKeepInventory(GameTestHelper helper, boolean value) {
         helper.getLevel().getGameRules().set(GameRules.KEEP_INVENTORY, value, helper.getLevel().getServer());
         helper.assertValueEqual(value, helper.getLevel().getGameRules().get(GameRules.KEEP_INVENTORY), "keepInventory setup must apply");
     }
+
+    private static void assertVanillaXpState(GameTestHelper helper, ServerPlayer player, long rawXp, String scenario) {
+        com.mentality.xpreserve.xp.XpState state = XpMath.stateFromTotalXp(rawXp);
+        helper.assertValueEqual(rawXp, PlayerXp.currentRawXp(player), scenario + " total XP must be exact");
+        helper.assertValueEqual(state.level(), player.experienceLevel, scenario + " level must match raw XP");
+        float expectedProgress = (float) state.xpIntoLevel() / state.xpNeededForNextLevel();
+        helper.assertTrue(Math.abs(player.experienceProgress - expectedProgress) < 0.00001F,
+                scenario + " progress must match raw XP");
+    }
+
 
     private static void assertState(
             GameTestHelper helper,

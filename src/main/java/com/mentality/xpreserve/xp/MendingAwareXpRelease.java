@@ -19,6 +19,10 @@ public final class MendingAwareXpRelease {
         long before = PlayerXp.currentRawXp(player);
         if (player.takeXpDelay != 0 || !PlayerXp.canRepresentRawXp(Math.addExact(before, releasedXp))) return null;
 
+        // A command may have updated level/progress without totalExperience. Establish a single
+        // exact vanilla state before invoking vanilla's Mending/pickup implementation.
+        PlayerXp.normalizeExactRawXp(player, before);
+
         ExperienceOrb transientOrb = new ExperienceOrb((ServerLevel) player.level(), player.getX(), player.getY(), player.getZ(),
                 Math.toIntExact(releasedXp));
         transientOrb.playerTouch(player);
@@ -26,7 +30,10 @@ public final class MendingAwareXpRelease {
         // a sequence of deliberate flask interactions cannot silently no-op.
         player.takeXpDelay = 0;
 
-        long after = PlayerXp.currentRawXp(player);
+        // playerTouch updates totalExperience from the normalized state. Normalize again because
+        // vanilla float progress can otherwise remain infinitesimally below a level boundary.
+        long after = player.totalExperience;
+        PlayerXp.normalizeExactRawXp(player, after);
         long gained = Math.subtractExact(after, before);
         long repaired = Math.subtractExact(releasedXp, gained);
         if (gained < 0 || repaired < 0) {

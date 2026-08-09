@@ -7,15 +7,9 @@ public final class PlayerXp {
     private PlayerXp() {
     }
 
-    /**
-     * Reads vanilla's persisted {@link Player#totalExperience} field, which is updated by
-     * {@link Player#giveExperiencePoints(int)} together with level and progress.
-     */
+    /** Reads authoritative visible vanilla XP from level plus in-level progress. */
     public static long currentRawXp(Player player) {
-        if (player.totalExperience < 0) {
-            throw new IllegalStateException("Vanilla player totalExperience must not be negative");
-        }
-        return player.totalExperience;
+        return XpMath.totalXpFromLevelProgress(player.experienceLevel, player.experienceProgress);
     }
 
     public static boolean canRepresentRawXp(long rawXp) {
@@ -38,7 +32,23 @@ public final class PlayerXp {
 
         long delta = Math.subtractExact(newRawXp, currentRawXp);
         player.giveExperiencePoints(Math.toIntExact(delta));
-        if (player.totalExperience != (int) newRawXp) {
+        normalizeExactRawXp(player, newRawXp);
+    }
+
+    /** Establishes the three vanilla XP fields from an already validated exact raw total. */
+    public static void normalizeExactRawXp(Player player, long rawXp) {
+        if (!canRepresentRawXp(rawXp)) {
+            throw new IllegalArgumentException("Raw XP is outside vanilla's integer range: " + rawXp);
+        }
+        // Vanilla death reward reads experienceLevel, not totalExperience. Normalize all three
+        // vanilla fields at the single authoritative mutation boundary so a death immediately
+        // following a withdrawal/capture cannot observe a stale level or progress value.
+        XpState state = XpMath.stateFromTotalXp(rawXp);
+        player.totalExperience = Math.toIntExact(rawXp);
+        player.experienceLevel = state.level();
+        player.experienceProgress = (float) state.xpIntoLevel() / state.xpNeededForNextLevel();
+        if (player.totalExperience != (int) rawXp || player.experienceLevel != state.level()
+                || Math.abs(player.experienceProgress - (float) state.xpIntoLevel() / state.xpNeededForNextLevel()) > 0.00001F) {
             throw new IllegalStateException("Vanilla player XP mutation did not preserve the planned raw total");
         }
     }
