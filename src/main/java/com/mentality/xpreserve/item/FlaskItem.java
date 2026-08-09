@@ -111,7 +111,13 @@ public final class FlaskItem extends Item {
         // validation, and the bridge guards vanilla's bounded integer XP representation.
         FlaskStoredXp.set(stack, transaction.newStoredRawXp());
         PlayerXp.applyExactRawXp(player, transaction.oldPlayerRawXp(), transaction.newPlayerRawXp());
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BOTTLE_FILL, SoundSource.PLAYERS, 0.45F, 0.9F);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                depositSoundFor(stack.is(ModItems.SOUL_FLASK)), SoundSource.PLAYERS, 0.45F, 0.9F);
         return InteractionResult.SUCCESS_SERVER;
+    }
+
+    /** Soul deposits use a restrained, non-death soul/anchor charge instead of bottle fill. */
+    static net.minecraft.sounds.SoundEvent depositSoundFor(boolean soulFlask) {
+        return soulFlask ? SoundEvents.RESPAWN_ANCHOR_CHARGE : SoundEvents.BOTTLE_FILL;
     }
 }

@@ -122,6 +122,20 @@ public final class FlaskRuntimeGameTests {
             helper.assertTrue(helper.getLevel().getServer().getAdvancements().get(id) != null,
                     "Recipe unlock advancement must load: " + id);
         }
+
+        net.minecraft.advancements.AdvancementHolder root = helper.getLevel().getServer().getAdvancements()
+                .get(Identifier.fromNamespaceAndPath("xp-reserve", "root"));
+        helper.assertTrue(root != null && root.value().display().isPresent(), "Root advancement display must load");
+        helper.assertTrue(root.value().display().orElseThrow().getBackground().isPresent(),
+                "Root advancement must use a valid explicit background resource");
+        helper.succeed();
+    }
+
+    @GameTest
+    public void upgradeRecipesHaveRecipeBookDisplaysAndUnlockRewards(GameTestHelper helper) {
+        assertRecipeBookUnlock(helper, "recipes/misc/flask_i_upgrade", "has_flask_i", "flask_i_upgrade");
+        assertRecipeBookUnlock(helper, "recipes/misc/flask_ii_upgrade", "has_flask_ii", "flask_ii_upgrade");
+        assertRecipeBookUnlock(helper, "recipes/misc/soul_flask_upgrade", "has_flask_iii", "soul_flask_upgrade");
         helper.succeed();
     }
 
@@ -382,6 +396,7 @@ public final class FlaskRuntimeGameTests {
         FlaskStoredXp.set(source, storedXp);
         CraftingInput input = CraftingInput.of(2, 1, java.util.List.of(source, new ItemStack(material)));
         helper.assertTrue(recipe.matches(input, helper.getLevel()), recipeId + " must match its source and material");
+        helper.assertValueEqual(1, recipe.display().size(), recipeId + " must expose one recipe-book display");
         ItemStack result = recipe.assemble(input, helper.getLevel().registryAccess());
         helper.assertTrue(result.is(targetItem), recipeId + " must produce its target flask tier");
         helper.assertValueEqual(storedXp, FlaskStoredXp.get(result), recipeId + " must preserve stored XP exactly");
@@ -398,6 +413,24 @@ public final class FlaskRuntimeGameTests {
                 .orElseThrow(() -> new IllegalStateException("Missing loaded recipe: " + key.identifier())).value();
         if (recipe instanceof CraftingRecipe craftingRecipe) return craftingRecipe;
         throw new IllegalStateException("Loaded recipe is not a crafting recipe: " + key.identifier());
+    }
+
+    private static void assertRecipeBookUnlock(GameTestHelper helper, String advancementPath, String criterion,
+            String recipePath) {
+        Identifier advancementId = Identifier.fromNamespaceAndPath("xp-reserve", advancementPath);
+        net.minecraft.advancements.AdvancementHolder advancement = helper.getLevel().getServer().getAdvancements().get(advancementId);
+        helper.assertTrue(advancement != null, "Recipe unlock advancement must exist: " + advancementId);
+        ResourceKey<Recipe<?>> recipeKey = ResourceKey.create(Registries.RECIPE,
+                Identifier.fromNamespaceAndPath("xp-reserve", recipePath));
+        Recipe<?> recipe = helper.getLevel().getServer().getRecipeManager().byKey(recipeKey)
+                .orElseThrow(() -> new IllegalStateException("Missing recipe: " + recipeKey.identifier())).value();
+        helper.assertTrue(!recipe.display().isEmpty(), "Recipe must expose a client recipe-book display: " + recipeKey.identifier());
+
+        ServerPlayer player = helper.makeMockServerPlayerInLevel();
+        helper.assertTrue(player.getAdvancements().award(advancement, criterion),
+                "Owning prerequisite must award its recipe unlock: " + advancementId);
+        helper.assertTrue(player.getRecipeBook().contains(recipeKey),
+                "Awarded unlock must place recipe in the player's recipe book: " + recipeKey.identifier());
     }
 
     private static void assertAdvancementParent(GameTestHelper helper, String path, String expectedParent) {

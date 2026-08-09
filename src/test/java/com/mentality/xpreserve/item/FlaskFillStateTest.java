@@ -54,6 +54,18 @@ class FlaskFillStateTest {
     }
 
     @Test
+    void advancementTranslationsExistInBothLocales() throws IOException {
+        for (String locale : new String[] {"en_us", "ru_ru"}) {
+            String text = new String(getClass().getClassLoader().getResourceAsStream("assets/xp-reserve/lang/" + locale + ".json")
+                    .readAllBytes(), StandardCharsets.UTF_8);
+            for (String advancement : new String[] {"root", "deeper_reserve", "veteran_reserve", "second_chance"}) {
+                org.junit.jupiter.api.Assertions.assertTrue(text.contains("advancement.xp-reserve." + advancement + ".title"));
+                org.junit.jupiter.api.Assertions.assertTrue(text.contains("advancement.xp-reserve." + advancement + ".description"));
+            }
+        }
+    }
+
+    @Test
     void fillTexturesKeepTheirTierShellAnchorsFixed() throws IOException {
         for (String family : new String[] {"flask_i", "flask_ii", "flask_iii", "soul_flask"}) {
             BufferedImage empty = texture(family, "empty");

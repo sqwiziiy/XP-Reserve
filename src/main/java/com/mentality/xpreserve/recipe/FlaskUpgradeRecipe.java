@@ -13,7 +13,11 @@ import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.PlacementInfo;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
+import net.minecraft.world.item.crafting.display.ShapelessCraftingRecipeDisplay;
+import net.minecraft.world.item.crafting.display.SlotDisplay;
 import net.minecraft.world.level.Level;
+import java.util.List;
 
 /** Two-item upgrade recipe that preserves only valid source-flask component state. */
 public final class FlaskUpgradeRecipe implements CraftingRecipe {
@@ -70,4 +74,17 @@ public final class FlaskUpgradeRecipe implements CraftingRecipe {
     @Override public RecipeSerializer<FlaskUpgradeRecipe> getSerializer() { return ModRecipeSerializers.forSource(source); }
     @Override public CraftingBookCategory category() { return CraftingBookCategory.MISC; }
     @Override public PlacementInfo placementInfo() { return PlacementInfo.create(java.util.List.of(Ingredient.of(source), Ingredient.of(material))); }
+
+    /**
+     * Custom recipes do not inherit vanilla's recipe-book display. Supply the two
+     * ingredients and a fresh target flask explicitly while retaining the strict
+     * runtime component validation in {@link #matches(CraftingInput, Level)}.
+     */
+    @Override
+    public List<RecipeDisplay> display() {
+        return List.of(new ShapelessCraftingRecipeDisplay(
+                List.of(new SlotDisplay.ItemSlotDisplay(source), new SlotDisplay.ItemSlotDisplay(material)),
+                new SlotDisplay.ItemStackSlotDisplay(new ItemStack(target)),
+                new SlotDisplay.ItemSlotDisplay(net.minecraft.world.item.Items.CRAFTING_TABLE)));
+    }
 }

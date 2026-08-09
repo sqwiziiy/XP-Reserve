@@ -17,11 +17,11 @@
   "tooltip.xp-reserve.soul.ready": "Страховка от смерти: готова",
   "tooltip.xp-reserve.soul.death": "При смерти сохраняет опыт и становится Флягой опыта III",
   "advancement.xp-reserve.root.title": "Запас опыта",
-  "advancement.xp-reserve.root.description": "Безопасно сохраните опыт для будущих приключений.",
-  "advancement.xp-reserve.deeper_reserve.title": "Больше запаса",
-  "advancement.xp-reserve.deeper_reserve.description": "Улучшите запас выше тридцатого уровня.",
+  "advancement.xp-reserve.root.description": "Создайте флягу, чтобы безопасно сохранять опыт.",
+  "advancement.xp-reserve.deeper_reserve.title": "Расширенный запас",
+  "advancement.xp-reserve.deeper_reserve.description": "Увеличьте вместимость запаса опыта выше тридцати уровней.",
   "advancement.xp-reserve.veteran_reserve.title": "Запас ветерана",
-  "advancement.xp-reserve.veteran_reserve.description": "Подготовьте запас для долгих вылазок.",
+  "advancement.xp-reserve.veteran_reserve.description": "Подготовьте большой запас опыта для долгого выживания.",
   "advancement.xp-reserve.second_chance.title": "Второй шанс",
-  "advancement.xp-reserve.second_chance.description": "Защитите запас опыта от смерти."
+  "advancement.xp-reserve.second_chance.description": "Подготовьте запас опыта к возможной смерти."
 }

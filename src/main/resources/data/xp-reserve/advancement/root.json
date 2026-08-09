@@ -3,6 +3,7 @@
     "icon": {"id": "xp-reserve:flask_i"},
     "title": {"translate": "advancement.xp-reserve.root.title"},
     "description": {"translate": "advancement.xp-reserve.root.description"},
+    "background": "minecraft:gui/advancements/backgrounds/stone",
     "frame": "task",
     "show_toast": true,
     "announce_to_chat": false,
