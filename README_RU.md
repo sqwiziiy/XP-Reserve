@@ -2,6 +2,12 @@
 
 > [English version](README.md)
 
+[![Сборка](https://github.com/sqwiziiy/XP-Reserve/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sqwiziiy/XP-Reserve/actions/workflows/ci.yml)
+![Minecraft 1.21.11](https://img.shields.io/badge/Minecraft-1.21.11-3C8527)
+![Fabric](https://img.shields.io/badge/Loader-Fabric-DBD0B4)
+![Java 21](https://img.shields.io/badge/Java-21-E76F00)
+![GPL-3.0-only](https://img.shields.io/badge/License-GPL--3.0--only-3B57A6)
+
 Переносные многоразовые фляги опыта для Fabric. XP Reserve хранит опыт как точные очки XP и помогает безопасно распоряжаться им в выживании, при Починке и после смерти.
 
 ## Текущий релиз
