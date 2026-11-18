@@ -28,7 +28,3 @@ Fabric API is required. JEI and REI support is optional client-side recipe-viewe
 ## Branches
 
 `main` contains project information only. Actual mod source is maintained in version-specific branches; see [the branch map](docs/BRANCHES.md).
-
-## License
-
-[CC0 1.0 Universal](LICENSE)
