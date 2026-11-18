@@ -4,10 +4,8 @@
 /run/
 /out/
 
-# Private local planning and release documentation
-/docs/*
-!/docs/
-!/docs/BRANCHES.md
+# Private local planning documentation
+/docs/
 
 # IDE and operating-system files
 /.idea/

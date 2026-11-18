@@ -1,0 +1,98 @@
+plugins {
+    id 'net.fabricmc.fabric-loom-remap' version "${loom_version}"
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+
+base {
+    archivesName = project.archives_base_name
+}
+
+loom {
+    officialMojangMappings()
+    splitEnvironmentSourceSets()
+
+    mods {
+        'xp-reserve' {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+}
+
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = 'xp-reserve-gametest'
+        enableGameTests = true
+        enableClientGameTests = false
+        eula = true
+    }
+}
+
+loom {
+    runs {
+        gameTest {
+            vmArg "-Dfabric-api.gametest.report-file=${layout.buildDirectory.file('reports/gametest/junit.xml').get().asFile}"
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+    maven { url = "https://maven.blamejared.com" }
+    maven { url = "https://maven.shedaniel.me/" }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
+
+    // Optional client viewer APIs. Loom remaps these mod artifacts into this
+    // project's official Mojang mappings; neither is packaged or required.
+    modCompileOnly("mezz.jei:jei-1.21.11-fabric:27.22.0.66") { transitive = false }
+    modCompileOnly("me.shedaniel:RoughlyEnoughItems-api-fabric:21.11.816") { transitive = false }
+    modCompileOnly("me.shedaniel:RoughlyEnoughItems-default-plugin-fabric:21.11.816") { transitive = false }
+    modCompileOnly("dev.architectury:architectury-fabric:19.0.1") { transitive = false }
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.0"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher:1.11.0"
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    withSourcesJar()
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('fabric.mod.json') {
+        expand version: project.version
+    }
+}
+
+tasks.named('remapJar') {
+    archiveFileName = "${project.archives_base_name}-${project.mod_version}-${project.archive_minecraft_suffix}.jar"
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}

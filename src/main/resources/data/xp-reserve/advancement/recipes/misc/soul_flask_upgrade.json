@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_flask_iii": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {"items": [{"items": "xp-reserve:flask_iii"}]}
+    }
+  },
+  "requirements": [["has_flask_iii"]],
+  "rewards": {"recipes": ["xp-reserve:soul_flask_upgrade"]}
+}
